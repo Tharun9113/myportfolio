@@ -1,0 +1,905 @@
+// ========================================
+// Configuration Import
+// ========================================
+import config from '../config/portfolio-config.js';
+
+// ========================================
+// Initialize AOS
+// ========================================
+AOS.init({
+    duration: 1000,
+    once: true,
+    offset: 100
+});
+
+// ========================================
+// Loading Screen
+// ========================================
+window.addEventListener('load', () => {
+    const loadingScreen = document.getElementById('loading-screen');
+    setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+    }, 500);
+});
+
+// ========================================
+// Theme Toggle
+// ========================================
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = themeToggle.querySelector('.theme-icon');
+const html = document.documentElement;
+
+// Check for saved theme preference or default to light mode
+const currentTheme = localStorage.getItem('theme') || 'light';
+html.setAttribute('data-theme', currentTheme);
+updateThemeIcon(currentTheme);
+
+themeToggle.addEventListener('click', () => {
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+});
+
+function updateThemeIcon(theme) {
+    themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+// ========================================
+// Mobile Menu Toggle
+// ========================================
+const menuToggle = document.getElementById('menu-toggle');
+const navMenu = document.getElementById('nav-menu');
+const navLinks = document.querySelectorAll('.nav-link');
+
+menuToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    menuToggle.classList.toggle('active');
+});
+
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+    });
+});
+
+// ========================================
+// Smooth Scroll
+// ========================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offsetTop = target.offsetTop - 80;
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// ========================================
+// Active Nav Link on Scroll
+// ========================================
+const sections = document.querySelectorAll('section[id]');
+const navLinksList = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= sectionTop - 100) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinksList.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// ========================================
+// Navbar Scroll Effect
+// ========================================
+const navbar = document.getElementById('navbar');
+let lastScroll = 0;
+
+window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    
+    if (currentScroll > 100) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+    
+    lastScroll = currentScroll;
+});
+
+// ========================================
+// Particles.js Configuration
+// ========================================
+if (typeof particlesJS !== 'undefined') {
+    particlesJS('particles-js', {
+        particles: {
+            number: {
+                value: 50,
+                density: {
+                    enable: true,
+                    value_area: 800
+                }
+            },
+            color: {
+                value: '#6366f1'
+            },
+            shape: {
+                type: 'circle',
+                stroke: {
+                    width: 0,
+                    color: '#000000'
+                }
+            },
+            opacity: {
+                value: 0.5,
+                random: false,
+                anim: {
+                    enable: false
+                }
+            },
+            size: {
+                value: 3,
+                random: true,
+                anim: {
+                    enable: false
+                }
+            },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: '#6366f1',
+                opacity: 0.4,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 2,
+                direction: 'none',
+                random: false,
+                straight: false,
+                out_mode: 'out',
+                bounce: false
+            }
+        },
+        interactivity: {
+            detect_on: 'canvas',
+            events: {
+                onhover: {
+                    enable: true,
+                    mode: 'repulse'
+                },
+                onclick: {
+                    enable: true,
+                    mode: 'push'
+                },
+                resize: true
+            },
+            modes: {
+                repulse: {
+                    distance: 100,
+                    duration: 0.4
+                },
+                push: {
+                    particles_nb: 4
+                }
+            }
+        },
+        retina_detect: true
+    });
+}
+
+// ========================================
+// Typed Text Animation
+// ========================================
+let nameTyped = false;
+
+function typeWriterAnimation(nameElement, name) {
+    if (nameTyped) return;
+    nameTyped = true;
+    
+    let i = 0;
+    nameElement.textContent = '';
+    function typeWriter() {
+        if (i < name.length) {
+            nameElement.textContent += name.charAt(i);
+            i++;
+            setTimeout(typeWriter, 100);
+        }
+    }
+    setTimeout(typeWriter, 500);
+}
+
+// ========================================
+// Update Hero Section with Config
+// ========================================
+function updateHeroSection() {
+    if (!config.personalInfo) return;
+    
+    const { name, title, bio, socialLinks } = config.personalInfo;
+    
+    // Update name with typing animation (only once)
+    const nameElement = document.getElementById('typed-name');
+    if (nameElement && name && !nameTyped) {
+        typeWriterAnimation(nameElement, name);
+    }
+    
+    // Update title
+    const titleElement = document.querySelector('.title');
+    if (titleElement && title) {
+        titleElement.textContent = title;
+    }
+    
+    // Update bio
+    const bioElement = document.querySelector('.hero-description');
+    if (bioElement && bio) {
+        bioElement.textContent = bio;
+    }
+    
+    // Update social links
+    if (socialLinks) {
+        const socialLinksElements = document.querySelectorAll('.hero-social .social-link');
+        socialLinksElements.forEach((link, index) => {
+            const platforms = ['github', 'linkedin', 'twitter', 'email'];
+            if (socialLinks[platforms[index]]) {
+                link.href = socialLinks[platforms[index]];
+            }
+        });
+    }
+}
+
+// ========================================
+// Animated Statistics
+// ========================================
+function animateStats() {
+    const stats = document.querySelectorAll('.stat-number');
+    const observerOptions = {
+        threshold: 0.5
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const stat = entry.target;
+                const target = parseFloat(stat.getAttribute('data-target'));
+                animateValue(stat, 0, target, 2000);
+                observer.unobserve(stat);
+            }
+        });
+    }, observerOptions);
+    
+    stats.forEach(stat => observer.observe(stat));
+}
+
+function animateValue(element, start, end, duration) {
+    let startTimestamp = null;
+    const isDecimal = end % 1 !== 0; // Check if end value is a decimal
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const current = progress * (end - start) + start;
+        
+        // Format based on whether it's a decimal or integer
+        if (isDecimal) {
+            element.textContent = current.toFixed(2);
+        } else {
+            element.textContent = Math.floor(current);
+        }
+        
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        } else {
+            // Ensure final value is correct
+            if (isDecimal) {
+                element.textContent = end.toFixed(2);
+            } else {
+                element.textContent = end;
+            }
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+// ========================================
+// Skills Section
+// ========================================
+function renderSkills() {
+    if (!config.skills || !config.skills.length) return;
+    
+    const skillsGrid = document.querySelector('.skills-grid');
+    if (!skillsGrid) return;
+    
+    skillsGrid.innerHTML = config.skills.map((skill, index) => {
+        // Check if icon is a URL (starts with http) or data URI (starts with data:)
+        const isImageIcon = skill.icon && (skill.icon.startsWith('http') || skill.icon.startsWith('//') || skill.icon.startsWith('data:'));
+        
+        // Special handling for DSA text icon
+        let iconHTML;
+        if (skill.icon === 'DSA_TEXT_ICON') {
+            iconHTML = '<div class="skill-icon skill-icon-text">DSA</div>';
+        } else if (isImageIcon) {
+            iconHTML = `<img src="${skill.icon}" alt="${skill.name}" class="skill-icon-img" onerror="this.style.display='none'; this.parentElement.innerHTML='💻';" />`;
+        } else {
+            iconHTML = `<div class="skill-icon">${skill.icon || '💻'}</div>`;
+        }
+        
+        return `
+        <div class="skill-item" data-aos="fade-up" data-aos-delay="${index * 100}">
+            ${iconHTML}
+            <div class="skill-name">${skill.name}</div>
+            ${skill.description ? `<div class="skill-description">${skill.description}</div>` : ''}
+            <div class="skill-level">${skill.level || 'Expert'}</div>
+        </div>
+    `;
+    }).join('');
+}
+
+// ========================================
+// Projects Section
+// ========================================
+function renderProjects() {
+    if (!config.projects || !config.projects.length) return;
+    
+    const projectsGrid = document.querySelector('.projects-grid');
+    const filtersContainer = document.querySelector('.project-filters');
+    
+    if (!projectsGrid || !filtersContainer) return;
+    
+    // Get all unique tags
+    const allTags = ['all'];
+    config.projects.forEach(project => {
+        if (project.tags) {
+            project.tags.forEach(tag => {
+                if (!allTags.includes(tag)) {
+                    allTags.push(tag);
+                }
+            });
+        }
+    });
+    
+    // Render filter buttons
+    filtersContainer.innerHTML = allTags.map(tag => `
+        <button class="filter-btn ${tag === 'all' ? 'active' : ''}" data-filter="${tag}">
+            ${tag.charAt(0).toUpperCase() + tag.slice(1)}
+        </button>
+    `).join('');
+    
+    // Render projects
+    renderProjectsGrid('all');
+    
+    // Add filter event listeners
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.getAttribute('data-filter');
+            renderProjectsGrid(filter);
+        });
+    });
+}
+
+function renderProjectsGrid(filter) {
+    const projectsGrid = document.querySelector('.projects-grid');
+    if (!projectsGrid) return;
+    
+    let filteredProjects = config.projects;
+    if (filter !== 'all') {
+        filteredProjects = config.projects.filter(project => 
+            project.tags && project.tags.includes(filter)
+        );
+    }
+    
+    const placeholderImage = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Crect fill='%23ddd' width='400' height='250'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='16' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3EProject Image%3C/text%3E%3C/svg%3E`;
+    
+    projectsGrid.innerHTML = filteredProjects.map((project, index) => `
+        <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}">
+            <div class="project-image">
+                <img src="${project.image || placeholderImage}" alt="${project.title}" onerror="this.src='${placeholderImage}'">
+                <div class="project-overlay">
+                    ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer">🔗</a>` : ''}
+                    ${project.github ? `<a href="${project.github}" target="_blank" aria-label="View Code" rel="noopener noreferrer">📂</a>` : ''}
+                </div>
+            </div>
+            <div class="project-content">
+                <div class="project-tags">
+                    ${project.tags ? project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('') : ''}
+                </div>
+                <h3 class="project-title">${project.title}</h3>
+                <p class="project-description">${project.description}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ========================================
+// Experience/Timeline Section
+// ========================================
+function renderTimeline() {
+    const timeline = document.querySelector('.timeline');
+    if (!timeline) return;
+    
+    let timelineItems = [];
+    
+    // Add experience items
+    if (config.experience && config.experience.length > 0) {
+        timelineItems = [...config.experience];
+    }
+    
+    // Add education item if it exists
+    if (config.education) {
+        const education = config.education;
+        timelineItems.push({
+            date: education.year || '',
+            title: education.degree || '',
+            company: education.institution || '',
+            description: `${education.field || ''} - ${education.currentYear || ''} | CGPA: ${education.cgpa || ''} | ${education.location || ''}`
+        });
+    }
+    
+    if (timelineItems.length === 0) return;
+    
+    // Sort by date (newest first) - simple string comparison
+    timelineItems.sort((a, b) => {
+        if (a.date && b.date) {
+            return b.date.localeCompare(a.date);
+        }
+        return 0;
+    });
+    
+    timeline.innerHTML = timelineItems.map((item, index) => `
+        <div class="timeline-item" data-aos="${index % 2 === 0 ? 'fade-right' : 'fade-left'}" data-aos-delay="${index * 100}">
+            <div class="timeline-content">
+                <div class="timeline-date">${item.date || ''}</div>
+                <h3 class="timeline-title">${item.title || ''}</h3>
+                <div class="timeline-company">${item.company || ''}</div>
+                <p class="timeline-description">${item.description || ''}</p>
+            </div>
+            <div class="timeline-dot"></div>
+        </div>
+    `).join('');
+}
+
+// ========================================
+// Contact Form
+// ========================================
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+    // Initialize EmailJS when DOM is ready
+    function initEmailJS() {
+        if (typeof emailjs !== 'undefined' && config.emailjs) {
+            const { serviceId, templateId, publicKey } = config.emailjs;
+            if (serviceId && templateId && publicKey && 
+                serviceId !== 'YOUR_SERVICE_ID' && 
+                templateId !== 'YOUR_TEMPLATE_ID' && 
+                publicKey !== 'YOUR_PUBLIC_KEY') {
+                try {
+                    emailjs.init(publicKey);
+                    console.log('EmailJS initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing EmailJS:', error);
+                }
+            }
+        }
+    }
+    
+    // Initialize EmailJS when ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initEmailJS);
+    } else {
+        // If EmailJS is already loaded, initialize immediately
+        if (typeof emailjs !== 'undefined') {
+            initEmailJS();
+        } else {
+            // Wait for EmailJS to load
+            window.addEventListener('load', initEmailJS);
+        }
+    }
+
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        
+        // Get form values
+        const formData = {
+            from_name: document.getElementById('name').value.trim(),
+            from_email: document.getElementById('email').value.trim(),
+            subject: document.getElementById('subject').value.trim(),
+            message: document.getElementById('message').value.trim(),
+            to_email: config.contact?.email || 'tharunkumar9113@gmail.com'
+        };
+        
+        // Validate form
+        if (!formData.from_name || !formData.from_email || !formData.subject || !formData.message) {
+            showFormMessage('Please fill in all fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.from_email)) {
+            showFormMessage('Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Show loading state
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+        submitButton.style.opacity = '0.7';
+        
+        try {
+            // Check if EmailJS is configured
+            if (typeof emailjs !== 'undefined' && config.emailjs) {
+                const { serviceId, templateId, publicKey } = config.emailjs;
+                
+                if (serviceId && templateId && publicKey && 
+                    serviceId !== 'YOUR_SERVICE_ID' && 
+                    templateId !== 'YOUR_TEMPLATE_ID' && 
+                    publicKey !== 'YOUR_PUBLIC_KEY') {
+                    
+                    // Ensure EmailJS is initialized
+                    try {
+                        emailjs.init(publicKey);
+                    } catch (initError) {
+                        // Already initialized, ignore
+                    }
+                    
+                    // Send email using EmailJS
+                    const response = await emailjs.send(serviceId, templateId, formData);
+                    
+                    console.log('Email sent successfully:', response);
+                    showFormMessage('Message sent successfully! I will get back to you soon.', 'success');
+                    contactForm.reset();
+                } else {
+                    // EmailJS not configured, use mailto as fallback
+                    console.warn('EmailJS not fully configured');
+                    sendMailtoFallback(formData);
+                }
+            } else {
+                // EmailJS not available, use mailto as fallback
+                console.warn('EmailJS library not loaded');
+                sendMailtoFallback(formData);
+            }
+        } catch (error) {
+            console.error('Error sending email:', error);
+            let errorMessage = 'Failed to send message. ';
+            
+            // Provide more specific error messages
+            if (error.text) {
+                errorMessage += `Error: ${error.text}. `;
+            } else if (error.message) {
+                errorMessage += `Error: ${error.message}. `;
+            }
+            
+            errorMessage += 'Please try again or contact me directly at ' + (config.contact?.email || 'tharunkumar9113@gmail.com');
+            showFormMessage(errorMessage, 'error');
+        } finally {
+            // Reset button state
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+            submitButton.style.opacity = '1';
+        }
+    });
+}
+
+// Fallback to mailto if EmailJS is not configured
+function sendMailtoFallback(formData) {
+    const mailtoLink = `mailto:${formData.to_email}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`From: ${formData.from_name} (${formData.from_email})\n\n${formData.message}`)}`;
+    window.location.href = mailtoLink;
+    showFormMessage('Opening your email client... If it doesn\'t open, please email me directly at ' + formData.to_email, 'info');
+}
+
+// Show form message
+function showFormMessage(message, type = 'info') {
+    // Remove existing message if any
+    const existingMessage = document.querySelector('.form-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // Create message element
+    const messageEl = document.createElement('div');
+    messageEl.className = `form-message form-message-${type}`;
+    messageEl.textContent = message;
+    
+    // Insert before submit button
+    const submitButton = contactForm.querySelector('button[type="submit"]');
+    contactForm.insertBefore(messageEl, submitButton);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (messageEl.parentNode) {
+            messageEl.style.opacity = '0';
+            messageEl.style.transform = 'translateY(-10px)';
+            setTimeout(() => messageEl.remove(), 300);
+        }
+    }, 5000);
+}
+
+// ========================================
+// Update Contact Information
+// ========================================
+function updateContactInfo() {
+    if (!config.contact) return;
+    
+    const { email, phone, location } = config.contact;
+    
+    // Update by ID for more reliable selection
+    const emailElement = document.getElementById('contact-email');
+    const phoneElement = document.getElementById('contact-phone');
+    const locationElement = document.getElementById('contact-location');
+    
+    if (email && emailElement) {
+        emailElement.textContent = email;
+    }
+    if (phone && phoneElement) {
+        phoneElement.textContent = phone;
+    }
+    if (location && locationElement) {
+        locationElement.textContent = location;
+    }
+}
+
+// ========================================
+// Update About Section
+// ========================================
+function updateAboutSection() {
+    // Update name in about section
+    const aboutName = document.getElementById('about-name');
+    if (aboutName && config.personalInfo && config.personalInfo.name) {
+        aboutName.textContent = config.personalInfo.name;
+    }
+    
+    if (!config.about) return;
+    
+    // Update bio
+    const aboutBio = document.getElementById('about-bio');
+    if (aboutBio && config.about.bio) {
+        // Split bio into paragraphs and create new paragraphs
+        const bioParagraphs = config.about.bio.split('\n').filter(p => p.trim());
+        aboutBio.innerHTML = bioParagraphs.map(para => `<p>${para.trim()}</p>`).join('');
+    }
+    
+    // Update stats dynamically
+    if (config.about.stats && config.about.stats.length > 0) {
+        const statsContainer = document.querySelector('.about-stats');
+        if (statsContainer) {
+            statsContainer.innerHTML = config.about.stats.map((stat, index) => `
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="${index * 100}">
+                    <div class="stat-number" data-target="${stat.value}">0</div>
+                    <div class="stat-label">${stat.label}</div>
+                </div>
+            `).join('');
+            
+            // Re-initialize stats animation after rendering
+            setTimeout(() => {
+                animateStats();
+            }, 100);
+        }
+    }
+}
+
+// ========================================
+// GSAP Animations
+// ========================================
+function initGSAPAnimations() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        return;
+    }
+    
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Parallax effect for hero section - reversed (starts visible, fades on scroll)
+    gsap.fromTo('.hero-image', 
+        {
+            opacity: 1,
+            y: 0,
+            filter: 'contrast(1) brightness(1)'
+        },
+        {
+            scrollTrigger: {
+                trigger: '.hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            },
+            y: 30,
+            opacity: 0.7,
+            filter: 'contrast(0.8) brightness(0.9)'
+        }
+    );
+    
+    // Floating animation for shapes
+    gsap.to('.shape-1', {
+        y: 30,
+        x: 20,
+        rotation: 360,
+        duration: 8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut'
+    });
+    
+    gsap.to('.shape-2', {
+        y: -30,
+        x: -20,
+        rotation: -360,
+        duration: 10,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut'
+    });
+    
+    gsap.to('.shape-3', {
+        y: 20,
+        x: 15,
+        rotation: 180,
+        duration: 6,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut'
+    });
+    
+    // Fade in animations with stagger
+    gsap.utils.toArray('.skill-item').forEach((item, index) => {
+        gsap.from(item, {
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 85%'
+            },
+            opacity: 0,
+            y: 50,
+            scale: 0.8,
+            duration: 0.8,
+            delay: index * 0.1,
+            ease: 'back.out(1.7)'
+        });
+    });
+    
+    gsap.utils.toArray('.project-card').forEach((item, index) => {
+        gsap.from(item, {
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 85%'
+            },
+            opacity: 0,
+            y: 50,
+            rotation: 5,
+            duration: 0.8,
+            delay: index * 0.1,
+            ease: 'power3.out'
+        });
+    });
+    
+    // Timeline items animation
+    gsap.utils.toArray('.timeline-item').forEach((item, index) => {
+        gsap.from(item, {
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 80%'
+            },
+            opacity: 0,
+            x: index % 2 === 0 ? -100 : 100,
+            duration: 1,
+            ease: 'power2.out'
+        });
+    });
+    
+    // Stats counter animation with GSAP
+    gsap.utils.toArray('.stat-item').forEach(item => {
+        const numberElement = item.querySelector('.stat-number');
+        if (numberElement) {
+            const target = parseFloat(numberElement.getAttribute('data-target'));
+            if (!isNaN(target)) {
+                ScrollTrigger.create({
+                    trigger: item,
+                    start: 'top 80%',
+                    onEnter: () => {
+                        const isDecimal = target % 1 !== 0;
+                        gsap.to({ value: 0 }, {
+                            value: target,
+                            duration: 2,
+                            ease: 'power2.out',
+                            onUpdate: function() {
+                                if (isDecimal) {
+                                    numberElement.textContent = this.targets()[0].value.toFixed(2);
+                                } else {
+                                    numberElement.textContent = Math.floor(this.targets()[0].value);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+    
+    // Parallax scroll for sections
+    gsap.utils.toArray('section').forEach(section => {
+        if (section.id !== 'home') {
+            gsap.to(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1
+                },
+                y: 50,
+                opacity: 0.8
+            });
+        }
+    });
+}
+
+// Initialize GSAP animations when ready
+if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGSAPAnimations);
+        window.addEventListener('gsapReady', initGSAPAnimations);
+    } else {
+        initGSAPAnimations();
+    }
+}
+
+// ========================================
+// Initialize Everything
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+    updateHeroSection();
+    updateAboutSection();
+    updateContactInfo();
+    renderSkills();
+    renderProjects();
+    renderTimeline();
+    
+    // Only use animateStats if GSAP is not available
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        animateStats();
+    }
+    
+    // Update page title
+    if (config.personalInfo && config.personalInfo.name) {
+        document.title = `${config.personalInfo.name} | Portfolio`;
+    }
+    
+    // Update meta description
+    if (config.personalInfo && config.personalInfo.bio) {
+        const metaDescription = document.querySelector('meta[name="description"]');
+        if (metaDescription) {
+            metaDescription.content = config.personalInfo.bio;
+        }
+    }
+    
+    // Initialize GSAP animations after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            // Re-run GSAP animations setup after content is rendered
+            const event = new Event('gsapReady');
+            window.dispatchEvent(event);
+        }
+    }, 100);
+});
+
+// ========================================
+// Export for use in other modules
+// ========================================
+export { updateHeroSection, renderSkills, renderProjects, renderTimeline };
+
