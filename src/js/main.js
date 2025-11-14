@@ -9,7 +9,11 @@ import config from '../config/portfolio-config.js';
 AOS.init({
     duration: 1000,
     once: true,
-    offset: 100
+    offset: 100,
+    disable: function() {
+        // Disable AOS on mobile devices
+        return window.innerWidth < 768;
+    }
 });
 
 // ========================================
@@ -128,10 +132,14 @@ window.addEventListener('scroll', () => {
 // Particles.js Configuration
 // ========================================
 if (typeof particlesJS !== 'undefined') {
+    // Reduce particle count on mobile for better performance
+    const isMobile = window.innerWidth <= 768;
+    const particleCount = isMobile ? 30 : 50;
+    
     particlesJS('particles-js', {
         particles: {
             number: {
-                value: 50,
+                value: particleCount,
                 density: {
                     enable: true,
                     value_area: 800
@@ -182,7 +190,7 @@ if (typeof particlesJS !== 'undefined') {
             detect_on: 'canvas',
             events: {
                 onhover: {
-                    enable: true,
+                    enable: !isMobile, // Disable hover on mobile
                     mode: 'repulse'
                 },
                 onclick: {
@@ -708,24 +716,27 @@ function initGSAPAnimations() {
     gsap.registerPlugin(ScrollTrigger);
     
     // Parallax effect for hero section - reversed (starts visible, fades on scroll)
-    gsap.fromTo('.hero-image', 
-        {
-            opacity: 1,
-            y: 0,
-            filter: 'contrast(1) brightness(1)'
-        },
-        {
-            scrollTrigger: {
-                trigger: '.hero',
-                start: 'top top',
-                end: 'bottom top',
-                scrub: true
+    // Disable on mobile devices
+    if (window.innerWidth > 768) {
+        gsap.fromTo('.hero-image', 
+            {
+                opacity: 1,
+                y: 0,
+                filter: 'contrast(1) brightness(1)'
             },
-            y: 30,
-            opacity: 0.7,
-            filter: 'contrast(0.8) brightness(0.9)'
-        }
-    );
+            {
+                scrollTrigger: {
+                    trigger: '.hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true
+                },
+                y: 30,
+                opacity: 0.7,
+                filter: 'contrast(0.8) brightness(0.9)'
+            }
+        );
+    }
     
     // Floating animation for shapes
     gsap.to('.shape-1', {
