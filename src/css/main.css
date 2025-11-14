@@ -860,6 +860,9 @@ section {
     object-fit: contain;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     transition: var(--transition);
+    display: block;
+    opacity: 1;
+    visibility: visible;
 }
 
 .skill-item:hover .skill-icon-img {
@@ -968,6 +971,9 @@ section {
     height: 100%;
     object-fit: cover;
     transition: var(--transition);
+    display: block;
+    opacity: 1;
+    visibility: visible;
 }
 
 .project-card:hover .project-image img {
@@ -1640,6 +1646,11 @@ button[type="submit"]:disabled {
     .skill-icon-img {
         width: 56px;
         height: 56px;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        max-width: 100%;
+        object-fit: contain;
     }
     
     .skill-name {
@@ -1701,6 +1712,18 @@ button[type="submit"]:disabled {
     
     .project-image {
         height: 200px;
+        display: block;
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .project-image img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
     
     .project-content {
@@ -2008,6 +2031,14 @@ button[type="submit"]:disabled {
         height: 48px;
     }
     
+    .skill-icon-img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
     .skill-name {
         font-size: 0.875rem;
     }
@@ -2037,6 +2068,15 @@ button[type="submit"]:disabled {
     
     .project-image {
         height: 180px;
+        display: block;
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .project-image img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
     
     .project-content {
@@ -2096,6 +2136,15 @@ button[type="submit"]:disabled {
     
     .project-image {
         height: 160px;
+        display: block;
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .project-image img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 }
 
@@ -2198,6 +2247,32 @@ button[type="submit"]:disabled {
         visibility: visible !important;
         display: block !important;
         min-height: auto !important;
+    }
+    
+    /* Ensure all images are visible on mobile */
+    img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Ensure skill icons are visible */
+    .skill-item img,
+    .skill-icon-img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Ensure project images are visible */
+    .project-image img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 100% !important;
+        height: 100% !important;
     }
     
     /* Override any GSAP transforms on sections */

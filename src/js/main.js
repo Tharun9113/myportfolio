@@ -342,7 +342,7 @@ function renderSkills() {
         if (skill.icon === 'DSA_TEXT_ICON') {
             iconHTML = '<div class="skill-icon skill-icon-text">DSA</div>';
         } else if (isImageIcon) {
-            iconHTML = `<img src="${skill.icon}" alt="${skill.name}" class="skill-icon-img" onerror="this.style.display='none'; this.parentElement.innerHTML='💻';" />`;
+            iconHTML = `<img src="${skill.icon}" alt="${skill.name}" class="skill-icon-img" loading="lazy" crossorigin="anonymous" onerror="console.error('Icon failed to load:', '${skill.icon}'); this.style.display='none'; this.parentElement.innerHTML='<div class=\\'skill-icon\\'>💻</div>';" onload="this.style.display='block'; this.style.opacity='1';" />`;
         } else {
             iconHTML = `<div class="skill-icon">${skill.icon || '💻'}</div>`;
         }
@@ -356,6 +356,18 @@ function renderSkills() {
         </div>
     `;
     }).join('');
+}
+
+// ========================================
+// Image Loading Helper
+// ========================================
+function preloadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+        img.src = src;
+    });
 }
 
 // ========================================
@@ -416,10 +428,21 @@ function renderProjectsGrid(filter) {
     
     const placeholderImage = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Crect fill='%23ddd' width='400' height='250'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='16' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3EProject Image%3C/text%3E%3C/svg%3E`;
     
-    projectsGrid.innerHTML = filteredProjects.map((project, index) => `
+    projectsGrid.innerHTML = filteredProjects.map((project, index) => {
+        // Ensure image path is correct
+        let imageSrc = project.image || placeholderImage;
+        // If it's a relative path starting with /, ensure it's absolute
+        if (imageSrc.startsWith('/') && !imageSrc.startsWith('//') && !imageSrc.startsWith('http')) {
+            // Already absolute, keep as is
+        } else if (imageSrc.startsWith('./')) {
+            // Convert relative to absolute
+            imageSrc = imageSrc.replace('./', '/');
+        }
+        
+        return `
         <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}">
             <div class="project-image">
-                <img src="${project.image || placeholderImage}" alt="${project.title}" onerror="this.src='${placeholderImage}'">
+                <img src="${imageSrc}" alt="${project.title}" loading="lazy" onerror="console.error('Image failed to load:', '${imageSrc}'); this.src='${placeholderImage}'; this.style.display='block';" onload="this.style.opacity='1'; this.style.display='block';">
                 <div class="project-overlay">
                     ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer">🔗</a>` : ''}
                     ${project.github ? `<a href="${project.github}" target="_blank" aria-label="View Code" rel="noopener noreferrer">📂</a>` : ''}
@@ -433,7 +456,8 @@ function renderProjectsGrid(filter) {
                 <p class="project-description">${project.description}</p>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // ========================================
