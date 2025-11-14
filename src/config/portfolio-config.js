@@ -18,8 +18,8 @@ const config = {
             twitter: '',
             email: 'mailto:tharunkumar9113@gmail.com'
         },
-        profileImage: './src/images/profile.jpg',
-        resume: './src/files/resume.pdf'
+        profileImage: '/images/profile.jpg',
+        resume: '/resume.pdf'
     },
 
     // About Section
@@ -109,7 +109,7 @@ const config = {
         {
             title: 'Face Recognition Attendance Management System',
             description: 'An innovative attendance management system using facial recognition technology. This system automates the attendance tracking process, eliminating manual entry and reducing errors. Features real-time face detection, user registration, attendance logging, and detailed reporting capabilities.',
-            image: './src/images/project1.jpg',
+            image: '/images/project1.jpg',
             tags: ['JavaScript', 'Face Recognition', 'Web Development'],
             demo: '',
             github: 'https://github.com/Tharun9113/Face_recognition_attendance_management_system'
@@ -117,7 +117,7 @@ const config = {
         {
             title: 'AuthGuard Pro',
             description: 'A comprehensive authentication and security system designed to protect web applications. Features robust user authentication, secure session management, password encryption, and multi-factor authentication capabilities. Built with modern security best practices to ensure maximum protection.',
-            image: './src/images/project2.jpg',
+            image: '/images/project2.jpg',
             tags: ['JavaScript', 'Security', 'Authentication'],
             demo: '',
             github: 'https://github.com/Tharun9113/AuthGuard_Pro'
