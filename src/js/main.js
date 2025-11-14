@@ -843,21 +843,23 @@ function initGSAPAnimations() {
         }
     });
     
-    // Parallax scroll for sections
-    gsap.utils.toArray('section').forEach(section => {
-        if (section.id !== 'home') {
-            gsap.to(section, {
-                scrollTrigger: {
-                    trigger: section,
-                    start: 'top top',
-                    end: 'bottom top',
-                    scrub: 1
-                },
-                y: 50,
-                opacity: 0.8
-            });
-        }
-    });
+    // Parallax scroll for sections - Disable on mobile
+    if (window.innerWidth > 768) {
+        gsap.utils.toArray('section').forEach(section => {
+            if (section.id !== 'home') {
+                gsap.to(section, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: 'top top',
+                        end: 'bottom top',
+                        scrub: 1
+                    },
+                    y: 50,
+                    opacity: 0.8
+                });
+            }
+        });
+    }
 }
 
 // Initialize GSAP animations when ready

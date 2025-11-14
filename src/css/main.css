@@ -630,6 +630,9 @@ section {
     position: relative;
     overflow: visible;
     width: 100%;
+    display: block;
+    opacity: 1;
+    visibility: visible;
 }
 
 .section-header {
@@ -1561,11 +1564,17 @@ button[type="submit"]:disabled {
     /* About Section */
     .about-content {
         max-width: 100%;
+        display: block;
+        visibility: visible;
+        opacity: 1;
     }
     
     .about-text {
         text-align: left;
         padding: 0 0.5rem;
+        display: block;
+        visibility: visible;
+        opacity: 1;
     }
     
     .about-text h3 {
@@ -1599,9 +1608,18 @@ button[type="submit"]:disabled {
     }
     
     /* Skills Section */
+    .skills {
+        display: block;
+        visibility: visible;
+        opacity: 1;
+    }
+    
     .skills-grid {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 1.25rem;
+        display: grid;
+        visibility: visible;
+        opacity: 1;
     }
     
     .skill-item {
@@ -1637,6 +1655,12 @@ button[type="submit"]:disabled {
     }
     
     /* Projects Section */
+    .projects {
+        display: block;
+        visibility: visible;
+        opacity: 1;
+    }
+    
     .project-filters {
         gap: 0.75rem;
         margin-bottom: 1.5rem;
@@ -1646,6 +1670,8 @@ button[type="submit"]:disabled {
         justify-content: center;
         width: 100%;
         overflow: visible;
+        visibility: visible;
+        opacity: 1;
     }
     
     .filter-btn {
@@ -1695,9 +1721,18 @@ button[type="submit"]:disabled {
     }
     
     /* Experience/Timeline Section */
+    .experience {
+        display: block;
+        visibility: visible;
+        opacity: 1;
+    }
+    
     .timeline {
         max-width: 100%;
         padding: 0 1rem;
+        display: block;
+        visibility: visible;
+        opacity: 1;
     }
     
     .timeline::before {
@@ -1739,9 +1774,18 @@ button[type="submit"]:disabled {
     }
     
     /* Contact Section */
+    .contact {
+        display: block;
+        visibility: visible;
+        opacity: 1;
+    }
+    
     .contact-content {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        display: grid;
+        visibility: visible;
+        opacity: 1;
     }
     
     .contact-info {
@@ -2145,6 +2189,24 @@ button[type="submit"]:disabled {
     * {
         animation-duration: 0.3s !important;
         transition-duration: 0.3s !important;
+    }
+    
+    /* Ensure all sections are fully visible on mobile */
+    section {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+        display: block !important;
+        min-height: auto !important;
+    }
+    
+    /* Override any GSAP transforms on sections */
+    section[data-aos],
+    section[data-aos].aos-animate,
+    section[data-aos].aos-init {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
     }
     
     /* Ensure image wrapper doesn't interfere with centering */
