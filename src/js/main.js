@@ -402,46 +402,40 @@ function renderSkills() {
             const fallbackEmoji = getIconFallback(skill.name);
             const alternativeCDN = getAlternativeCDN(skill.icon);
             
-            // On mobile: Show emoji, on desktop: show SVG with emoji fallback
-            if (isMobileScreen) {
-                // Mobile: Show emoji with strong inline styles
-                iconHTML = `<div class="skill-icon-emoji-mobile" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important; color: inherit !important;">${fallbackEmoji}</div>`;
-            } else {
-                // Desktop: Show SVG icon with emoji fallback on error
-                iconHTML = `
-                    <img 
-                        id="${iconId}" 
-                        src="${skill.icon}" 
-                        alt="${skill.name}" 
-                        class="skill-icon-img" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer"
-                        style="display: block; opacity: 1; visibility: visible; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem;"
-                        onerror="
-                            const img = this;
-                            const altSrc = '${alternativeCDN || ''}';
-                            if (altSrc && img.src !== altSrc && !img.dataset.triedAlt) {
-                                img.dataset.triedAlt = 'true';
-                                img.src = altSrc;
-                            } else {
-                                img.onerror = null;
-                                img.style.display = 'none';
-                                const fallback = document.createElement('div');
-                                fallback.className = 'skill-icon';
-                                fallback.textContent = '${fallbackEmoji}';
-                                fallback.style.fontSize = '3rem';
-                                img.parentElement.insertBefore(fallback, img);
-                                img.remove();
-                            }
-                        "
-                        onload="
-                            this.style.display = 'block';
-                            this.style.opacity = '1';
-                            this.style.visibility = 'visible';
-                        "
-                    />
-                `;
-            }
+            // Use SVG icons for both mobile and desktop (same as desktop)
+            iconHTML = `
+                <img 
+                    id="${iconId}" 
+                    src="${skill.icon}" 
+                    alt="${skill.name}" 
+                    class="skill-icon-img" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer"
+                    style="display: block; opacity: 1; visibility: visible; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem;"
+                    onerror="
+                        const img = this;
+                        const altSrc = '${alternativeCDN || ''}';
+                        if (altSrc && img.src !== altSrc && !img.dataset.triedAlt) {
+                            img.dataset.triedAlt = 'true';
+                            img.src = altSrc;
+                        } else {
+                            img.onerror = null;
+                            img.style.display = 'none';
+                            const fallback = document.createElement('div');
+                            fallback.className = 'skill-icon';
+                            fallback.textContent = '${fallbackEmoji}';
+                            fallback.style.fontSize = '3rem';
+                            img.parentElement.insertBefore(fallback, img);
+                            img.remove();
+                        }
+                    "
+                    onload="
+                        this.style.display = 'block';
+                        this.style.opacity = '1';
+                        this.style.visibility = 'visible';
+                    "
+                />
+            `;
         } else {
             iconHTML = `<div class="skill-icon">${skill.icon || '💻'}</div>`;
         }
@@ -455,16 +449,6 @@ function renderSkills() {
         </div>
     `;
     }).join('');
-    
-    // Force show emojis on mobile after rendering
-    if (isMobileScreen) {
-        setTimeout(() => {
-            const emojis = document.querySelectorAll('.skill-icon-emoji-mobile');
-            emojis.forEach(emoji => {
-                emoji.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;';
-            });
-        }, 50);
-    }
 }
 
 // ========================================
