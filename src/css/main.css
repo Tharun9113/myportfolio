@@ -880,12 +880,18 @@ section {
 
 /* Ensure emoji is always visible on mobile - AGGRESSIVE */
 @media (max-width: 768px) {
-    .skill-icon-emoji {
+    .skill-icon-emoji,
+    .skill-item .skill-icon-emoji,
+    .skill-icon.skill-icon-emoji {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         font-size: 3rem !important;
         margin: 0 auto 1rem !important;
+        width: 100% !important;
+        text-align: center !important;
+        line-height: 1 !important;
+        min-height: 64px !important;
     }
     
     .skill-item {
@@ -902,21 +908,28 @@ section {
         display: none !important;
     }
     
-    /* Force emoji to show */
-    .skill-item .skill-icon-emoji {
+    /* Force ALL skill icons with emoji class to show */
+    .skill-item div.skill-icon-emoji,
+    .skill-item div[class*="skill-icon-emoji"],
+    .skill-item .skill-icon.skill-icon-emoji {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+        font-size: 3rem !important;
     }
 }
 
 /* Also for touch devices */
 @media (hover: none) and (pointer: coarse) {
-    .skill-icon-emoji {
+    .skill-icon-emoji,
+    .skill-item .skill-icon-emoji,
+    .skill-icon.skill-icon-emoji,
+    .skill-item div.skill-icon-emoji {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         font-size: 3rem !important;
+        margin: 0 auto 1rem !important;
     }
     
     .skill-item .skill-icon-img {
@@ -2407,36 +2420,58 @@ button[type="submit"]:disabled {
         background: var(--bg-secondary) !important;
     }
     
-    /* Ensure project cards are visible */
+    /* Ensure project cards are visible and organized */
     .project-card {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+        margin-bottom: 1.5rem !important;
     }
     
     .projects-grid {
         display: grid !important;
         visibility: visible !important;
         opacity: 1 !important;
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        width: 100% !important;
     }
     
-    /* Ensure timeline is visible on mobile */
+    /* Ensure timeline is visible and organized on mobile */
     .timeline {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+        width: 100% !important;
+        padding: 0 1rem !important;
     }
     
     .timeline-item {
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
+        margin-bottom: 2rem !important;
+        width: 100% !important;
     }
     
     .timeline-content {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+        width: calc(100% - 60px) !important;
+        margin-left: 60px !important;
+        padding: 1.5rem !important;
+    }
+    
+    /* Force skill icons/emojis to show on mobile */
+    .skill-item .skill-icon-emoji,
+    .skill-item div.skill-icon-emoji,
+    .skill-item .skill-icon.skill-icon-emoji {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 3rem !important;
+        margin: 0 auto 1rem !important;
     }
     
     /* Override any GSAP transforms on sections */

@@ -1221,19 +1221,31 @@ document.addEventListener('DOMContentLoaded', () => {
             window.dispatchEvent(event);
         }
         
-        // Force show emojis on mobile immediately
-        if (isMobileDevice()) {
-            // Force show all emojis
-            setTimeout(() => {
-                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon');
+        // Force show emojis on mobile immediately - ALWAYS run this
+        setTimeout(() => {
+            // Check if mobile or small screen
+            const isMobile = window.innerWidth <= 768 || isMobileDevice();
+            if (isMobile) {
+                // Force show all emojis with multiple selectors
+                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon.skill-icon-emoji, .skill-item div[data-skill-name]');
                 emojis.forEach(emoji => {
-                    if (emoji.textContent && emoji.textContent.trim().length > 0) {
-                        emoji.style.display = 'block';
-                        emoji.style.visibility = 'visible';
-                        emoji.style.opacity = '1';
+                    if (emoji && (emoji.textContent || emoji.innerHTML)) {
+                        emoji.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
                     }
                 });
-            }, 50);
+                
+                // Also check for any divs with emoji content
+                const skillItems = document.querySelectorAll('.skill-item');
+                skillItems.forEach(item => {
+                    const emojiDiv = item.querySelector('div[class*="emoji"], div[class*="skill-icon"]');
+                    if (emojiDiv && (emojiDiv.textContent || emojiDiv.innerHTML) && emojiDiv.textContent.trim().length > 0) {
+                        emojiDiv.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
+                    }
+                });
+            }
+        }, 50);
+        
+        if (isMobileDevice()) {
             
             // Ensure images load on mobile devices
             ensureImagesLoad();
@@ -1245,18 +1257,32 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Also ensure images load when window loads completely
     window.addEventListener('load', () => {
-        if (isMobileDevice()) {
-            // Force show emojis
-            setTimeout(() => {
-                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon');
+        // ALWAYS try to show emojis on mobile
+        setTimeout(() => {
+            const isMobile = window.innerWidth <= 768 || isMobileDevice();
+            if (isMobile) {
+                // Force show all emojis with multiple selectors
+                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon.skill-icon-emoji, .skill-item div[data-skill-name], .skill-item div[class*="emoji"]');
                 emojis.forEach(emoji => {
-                    if (emoji.textContent && emoji.textContent.trim().length > 0) {
-                        emoji.style.display = 'block';
-                        emoji.style.visibility = 'visible';
-                        emoji.style.opacity = '1';
+                    if (emoji && (emoji.textContent || emoji.innerHTML) && emoji.textContent.trim().length > 0) {
+                        emoji.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
                     }
                 });
-            }, 50);
+                
+                // Also check skill items directly
+                const skillItems = document.querySelectorAll('.skill-item');
+                skillItems.forEach(item => {
+                    const children = item.children;
+                    for (let child of children) {
+                        if (child.tagName === 'DIV' && (child.textContent || child.innerHTML) && child.textContent.trim().length > 0 && !child.classList.contains('skill-name') && !child.classList.contains('skill-level') && !child.classList.contains('skill-description')) {
+                            child.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
+                        }
+                    }
+                });
+            }
+        }, 50);
+        
+        if (isMobileDevice()) {
             
             ensureImagesLoad();
             setTimeout(ensureImagesLoad, 1000);
