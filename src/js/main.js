@@ -325,6 +325,25 @@ function animateValue(element, start, end, duration) {
 }
 
 // ========================================
+// Icon Fallback Helper
+// ========================================
+function getIconFallback(skillName) {
+    const iconMap = {
+        'Python': '🐍',
+        'Java': '☕',
+        'C++': '⚙️',
+        'C': '⚙️',
+        'Django': '🎸',
+        'SQL': '🗄️',
+        'Git/GitHub': '🔧',
+        'JavaScript': '📜',
+        'HTML/CSS': '🎨',
+        'App Development': '📱'
+    };
+    return iconMap[skillName] || '💻';
+}
+
+// ========================================
 // Skills Section
 // ========================================
 function renderSkills() {
@@ -342,9 +361,46 @@ function renderSkills() {
         if (skill.icon === 'DSA_TEXT_ICON') {
             iconHTML = '<div class="skill-icon skill-icon-text">DSA</div>';
         } else if (isImageIcon) {
-            // Remove crossorigin for external CDN URLs to avoid CORS issues on mobile
-            // Add referrerpolicy and better error handling
-            iconHTML = `<img src="${skill.icon}" alt="${skill.name}" class="skill-icon-img" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null; this.style.display='none'; const fallback = document.createElement('div'); fallback.className='skill-icon'; fallback.textContent='💻'; this.parentElement.insertBefore(fallback, this); this.remove();" onload="this.style.display='block'; this.style.opacity='1'; this.style.visibility='visible';" style="display: block; opacity: 1; visibility: visible;" />`;
+            // Create a unique ID for this icon
+            const iconId = `skill-icon-${index}-${Date.now()}`;
+            const fallbackEmoji = getIconFallback(skill.name);
+            
+            // Try multiple CDN sources for better reliability
+            const alternativeCDN = skill.icon.replace('cdn.jsdelivr.net', 'raw.githubusercontent.com').replace('/gh/devicons/devicon/', '/devicons/devicon/master/');
+            
+            iconHTML = `
+                <img 
+                    id="${iconId}" 
+                    src="${skill.icon}" 
+                    alt="${skill.name}" 
+                    class="skill-icon-img" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer"
+                    style="display: block; opacity: 1; visibility: visible; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem;"
+                    onerror="
+                        const img = this;
+                        const altSrc = '${alternativeCDN}';
+                        if (img.src !== altSrc && !img.dataset.triedAlt) {
+                            img.dataset.triedAlt = 'true';
+                            img.src = altSrc;
+                        } else {
+                            img.onerror = null;
+                            img.style.display = 'none';
+                            const fallback = document.createElement('div');
+                            fallback.className = 'skill-icon';
+                            fallback.textContent = '${fallbackEmoji}';
+                            fallback.style.fontSize = '3rem';
+                            img.parentElement.insertBefore(fallback, img);
+                            img.remove();
+                        }
+                    "
+                    onload="
+                        this.style.display = 'block';
+                        this.style.opacity = '1';
+                        this.style.visibility = 'visible';
+                    "
+                />
+            `;
         } else {
             iconHTML = `<div class="skill-icon">${skill.icon || '💻'}</div>`;
         }
@@ -378,36 +434,63 @@ function preloadImage(src) {
 function ensureImagesLoad() {
     // Ensure all skill icons load on mobile
     const skillIcons = document.querySelectorAll('.skill-icon-img');
-    skillIcons.forEach(img => {
-        if (!img.complete || img.naturalHeight === 0) {
-            // Image failed to load, retry once
-            const originalSrc = img.src;
-            img.src = '';
-            setTimeout(() => {
-                img.src = originalSrc;
-            }, 100);
-        }
-        // Force display
+    skillIcons.forEach((img, index) => {
+        // Force display first
         img.style.display = 'block';
         img.style.opacity = '1';
         img.style.visibility = 'visible';
+        
+        if (!img.complete || img.naturalHeight === 0) {
+            // Image failed to load, try alternative CDN
+            const originalSrc = img.src;
+            if (originalSrc.includes('cdn.jsdelivr.net')) {
+                const altSrc = originalSrc.replace('cdn.jsdelivr.net', 'raw.githubusercontent.com').replace('/gh/devicons/devicon/', '/devicons/devicon/master/');
+                img.src = altSrc;
+            } else {
+                // Retry original source
+                img.src = '';
+                setTimeout(() => {
+                    img.src = originalSrc;
+                }, 200);
+            }
+        }
     });
     
     // Ensure all project images load on mobile
     const projectImages = document.querySelectorAll('.project-image img');
     projectImages.forEach(img => {
-        if (!img.complete || img.naturalHeight === 0) {
-            // Image failed to load, retry once
-            const originalSrc = img.src;
-            img.src = '';
-            setTimeout(() => {
-                img.src = originalSrc;
-            }, 100);
-        }
-        // Force display
+        // Force display first
         img.style.display = 'block';
         img.style.opacity = '1';
         img.style.visibility = 'visible';
+        
+        if (!img.complete || img.naturalHeight === 0) {
+            // Image failed to load, try alternative paths
+            const originalSrc = img.src;
+            if (originalSrc.includes('/images/')) {
+                // Try different path variations
+                const altPaths = [
+                    originalSrc.replace('/images/', './images/'),
+                    originalSrc.replace('/images/', 'images/'),
+                    originalSrc
+                ];
+                let currentPathIndex = 0;
+                const tryNextPath = () => {
+                    if (currentPathIndex < altPaths.length) {
+                        img.src = altPaths[currentPathIndex];
+                        currentPathIndex++;
+                    }
+                };
+                img.src = '';
+                setTimeout(tryNextPath, 200);
+            } else {
+                // Retry original source
+                img.src = '';
+                setTimeout(() => {
+                    img.src = originalSrc;
+                }, 200);
+            }
+        }
     });
 }
 
@@ -489,10 +572,44 @@ function renderProjectsGrid(filter) {
             }
         }
         
+        // Create unique ID for this image
+        const imageId = `project-img-${index}-${Date.now()}`;
+        
         return `
         <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}">
             <div class="project-image">
-                <img src="${imageSrc}" alt="${project.title}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${placeholderImage}'; this.style.display='block'; this.style.opacity='1'; this.style.visibility='visible';" onload="this.style.opacity='1'; this.style.display='block'; this.style.visibility='visible';" style="display: block; opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover;">
+                <img 
+                    id="${imageId}"
+                    src="${imageSrc}" 
+                    alt="${project.title}" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer" 
+                    onerror="
+                        const img = this;
+                        if (img.src !== '${placeholderImage}' && !img.dataset.triedPlaceholder) {
+                            img.dataset.triedPlaceholder = 'true';
+                            // Try alternative path
+                            const altPath = img.src.replace('/images/', './images/');
+                            if (altPath !== img.src) {
+                                img.src = altPath;
+                            } else {
+                                img.src = '${placeholderImage}';
+                            }
+                        } else {
+                            img.onerror = null;
+                            img.src = '${placeholderImage}';
+                            img.style.display = 'block';
+                            img.style.opacity = '1';
+                            img.style.visibility = 'visible';
+                        }
+                    " 
+                    onload="
+                        this.style.opacity = '1';
+                        this.style.display = 'block';
+                        this.style.visibility = 'visible';
+                    " 
+                    style="display: block; opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover;"
+                />
                 <div class="project-overlay">
                     ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer">🔗</a>` : ''}
                     ${project.github ? `<a href="${project.github}" target="_blank" aria-label="View Code" rel="noopener noreferrer">📂</a>` : ''}
