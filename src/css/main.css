@@ -1492,6 +1492,41 @@ button[type="submit"]:disabled {
         --container-padding: 0 15px;
     }
     
+    /* Prevent horizontal overflow */
+    * {
+        box-sizing: border-box !important;
+    }
+    
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        position: relative !important;
+    }
+    
+    body {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Ensure all containers fit */
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 1rem !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+    }
+    
+    section {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+    
     /* Navigation */
     .menu-toggle {
         display: flex;
@@ -1671,28 +1706,43 @@ button[type="submit"]:disabled {
         display: none;
     }
     
-    /* Section Headers - Better Mobile Layout */
+    /* Section Headers - Better Mobile Layout - No Overlap */
     .section-header {
         margin-bottom: 1.5rem !important;
         text-align: center !important;
         padding: 0 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     .section-title {
         font-size: clamp(1.75rem, 5vw, 2.25rem) !important;
         margin-bottom: 0.5rem !important;
         text-align: center !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .section-description {
         font-size: clamp(0.9rem, 3vw, 1rem) !important;
         margin-bottom: 0 !important;
         text-align: center !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
-    /* About Section - Better Mobile Layout */
+    /* About Section - Better Mobile Layout - No Overlap */
     .about {
         padding: 2rem 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
     }
     
     .about-content {
@@ -1701,6 +1751,7 @@ button[type="submit"]:disabled {
         visibility: visible !important;
         opacity: 1 !important;
         width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     .about-text {
@@ -1710,12 +1761,17 @@ button[type="submit"]:disabled {
         visibility: visible !important;
         opacity: 1 !important;
         width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     .about-text h3 {
         font-size: clamp(1.5rem, 5vw, 1.8rem) !important;
         text-align: center !important;
         margin-bottom: 1rem !important;
+        word-wrap: break-word !important;
     }
     
     .about-text p {
@@ -1723,11 +1779,13 @@ button[type="submit"]:disabled {
         margin-bottom: 1rem !important;
         text-align: left !important;
         line-height: 1.6 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     .about-stats {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 1rem !important;
+        gap: 0.75rem !important;
         margin: 1.5rem 0 !important;
         display: grid !important;
         visibility: visible !important;
@@ -1735,6 +1793,7 @@ button[type="submit"]:disabled {
         width: 100% !important;
         max-width: 100% !important;
         padding: 0 !important;
+        box-sizing: border-box !important;
     }
     
     .stat-item {
@@ -1744,8 +1803,11 @@ button[type="submit"]:disabled {
         justify-content: center !important;
         visibility: visible !important;
         opacity: 1 !important;
-        padding: 1rem 0.5rem !important;
+        padding: 0.875rem 0.5rem !important;
         text-align: center !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .stat-number {
@@ -1765,12 +1827,16 @@ button[type="submit"]:disabled {
         color: var(--text-secondary) !important;
     }
     
-    /* Skills Section - Better Mobile Layout */
+    /* Skills Section - Better Mobile Layout - No Overlap */
     .skills {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         padding: 2rem 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
     }
     
     .skills-grid {
@@ -1783,6 +1849,7 @@ button[type="submit"]:disabled {
         max-width: 100% !important;
         padding: 0 !important;
         margin: 0 auto !important;
+        box-sizing: border-box !important;
     }
     
     .skill-item {
@@ -1792,9 +1859,13 @@ button[type="submit"]:disabled {
         justify-content: center !important;
         visibility: visible !important;
         opacity: 1 !important;
-        padding: 1.25rem 0.75rem !important;
+        padding: 1rem 0.5rem !important;
         text-align: center !important;
-        min-height: 140px !important;
+        min-height: 130px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
     }
     
     .skill-icon {
@@ -1850,12 +1921,16 @@ button[type="submit"]:disabled {
         color: var(--text-secondary) !important;
     }
     
-    /* Projects Section - Better Mobile Layout */
+    /* Projects Section - Better Mobile Layout - No Overlap */
     .projects {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         padding: 2rem 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
     }
     
     .project-filters {
@@ -1866,19 +1941,22 @@ button[type="submit"]:disabled {
         flex-wrap: wrap !important;
         justify-content: center !important;
         width: 100% !important;
+        max-width: 100% !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
         visibility: visible !important;
         opacity: 1 !important;
         -webkit-overflow-scrolling: touch !important;
+        box-sizing: border-box !important;
     }
     
     .filter-btn {
-        padding: 0.5rem 1rem !important;
-        font-size: 0.8rem !important;
+        padding: 0.5rem 0.875rem !important;
+        font-size: 0.75rem !important;
         white-space: nowrap !important;
         flex-shrink: 0 !important;
         border-radius: 20px !important;
+        box-sizing: border-box !important;
     }
     
     .projects-grid {
@@ -1890,6 +1968,7 @@ button[type="submit"]:disabled {
         display: grid !important;
         padding: 0 !important;
         margin: 0 auto !important;
+        box-sizing: border-box !important;
     }
     
     .skills-grid {
@@ -2569,7 +2648,7 @@ button[type="submit"]:disabled {
         background: var(--bg-secondary) !important;
     }
     
-    /* Project cards - Better Mobile Layout */
+    /* Project cards - Better Mobile Layout - No Overlap */
     .project-card {
         display: block !important;
         visibility: visible !important;
@@ -2579,6 +2658,7 @@ button[type="submit"]:disabled {
         max-width: 100% !important;
         border-radius: 15px !important;
         overflow: hidden !important;
+        box-sizing: border-box !important;
     }
     
     .projects-grid {
@@ -2591,23 +2671,32 @@ button[type="submit"]:disabled {
         max-width: 100% !important;
         padding: 0 !important;
         margin: 0 auto !important;
+        box-sizing: border-box !important;
     }
     
-    .project-info {
+    .project-info,
+    .project-content {
         padding: 1.25rem !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .project-title {
         font-size: 1.1rem !important;
         margin-bottom: 0.5rem !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     .project-description {
         font-size: 0.875rem !important;
         line-height: 1.5 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
-    /* Timeline - Better Mobile Layout */
+    /* Timeline - Better Mobile Layout - No Overlap */
     .timeline {
         display: block !important;
         visibility: visible !important;
@@ -2616,52 +2705,93 @@ button[type="submit"]:disabled {
         max-width: 100% !important;
         padding: 2rem 1rem !important;
         margin: 0 auto !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
     }
     
     .timeline-item {
-        display: flex !important;
+        display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         margin-bottom: 1.5rem !important;
         width: 100% !important;
+        max-width: 100% !important;
         position: relative !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
     }
     
     .timeline-content {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
-        width: calc(100% - 50px) !important;
-        margin-left: 50px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
         padding: 1.25rem !important;
         border-radius: 12px !important;
+        box-sizing: border-box !important;
+        position: relative !important;
     }
     
-    /* Ensure skill icons show properly on mobile */
+    .timeline-item::before {
+        display: none !important;
+    }
+    
+    /* Ensure skill icons show properly on mobile - No Overlap */
     .skill-item .skill-icon-img {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         width: 56px !important;
         height: 56px !important;
+        max-width: 100% !important;
         object-fit: contain !important;
         margin: 0 auto 0.75rem !important;
+        box-sizing: border-box !important;
     }
     
-    /* Force about stats to show */
+    .skill-name,
+    .skill-level,
+    .skill-description {
+        width: 100% !important;
+        max-width: 100% !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Force about stats to show - No Overlap */
     .about-stats {
         display: grid !important;
         visibility: visible !important;
         opacity: 1 !important;
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
         width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     .stat-item {
-        display: block !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
         visibility: visible !important;
         opacity: 1 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .stat-number,
+    .stat-label {
+        width: 100% !important;
+        max-width: 100% !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        text-align: center !important;
     }
     
     /* Override any GSAP transforms on sections */
