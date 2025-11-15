@@ -1271,62 +1271,172 @@ section {
 /* ========================================
    Contact Section
    ======================================== */
-.contact-content {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    gap: 4rem;
-}
-
-.contact-info h3 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.contact-info p {
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    line-height: 1.8;
-}
-
-.contact-details {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.contact-item {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-}
-
-.contact-icon {
-    width: 50px;
-    height: 50px;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
-}
-
-.contact-item h4 {
-    margin-bottom: 0.25rem;
-}
-
-.contact-item p {
-    color: var(--text-secondary);
-    margin: 0;
-}
-
-.contact-form-wrapper {
-    background: var(--bg-card);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px var(--shadow);
-}
+    .contact-content {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 4rem;
+    }
+    
+    .contact-info h3 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-info p {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+    
+    .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .contact-item h4 {
+        margin-bottom: 0.25rem;
+    }
+    
+    .contact-item p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+    
+    .contact-form-wrapper {
+        background: var(--bg-card);
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px var(--shadow);
+    }
+    
+    /* Contact Section - Better Mobile Layout */
+    @media (max-width: 768px) {
+        .contact {
+            padding: 2rem 1rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+        
+        .contact-content {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2.5rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+            box-sizing: border-box !important;
+        }
+        
+        .contact-info {
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        .contact-info h3 {
+            font-size: clamp(1.5rem, 5vw, 1.8rem) !important;
+            margin-bottom: 1rem !important;
+            text-align: center !important;
+        }
+        
+        .contact-info p {
+            font-size: clamp(0.9rem, 3vw, 1rem) !important;
+            margin-bottom: 2rem !important;
+            text-align: center !important;
+            line-height: 1.6 !important;
+        }
+        
+        .contact-details {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1.5rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+        }
+        
+        .contact-item {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 0.75rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 1rem !important;
+            box-sizing: border-box !important;
+        }
+        
+        .contact-icon {
+            width: 50px !important;
+            height: 50px !important;
+            margin: 0 auto !important;
+        }
+        
+        .contact-item h4 {
+            font-size: 1rem !important;
+            margin-bottom: 0.25rem !important;
+        }
+        
+        .contact-item p {
+            font-size: 0.9rem !important;
+            word-wrap: break-word !important;
+        }
+        
+        .contact-form-wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 1.5rem !important;
+            margin: 0 auto !important;
+            box-sizing: border-box !important;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0.875rem !important;
+            font-size: 0.95rem !important;
+            box-sizing: border-box !important;
+        }
+        
+        .contact-form .btn {
+            width: 100% !important;
+            padding: 0.875rem 1.5rem !important;
+            margin-top: 0.5rem !important;
+        }
+    }
 
 .form-group {
     margin-bottom: 1.5rem;
@@ -1512,18 +1622,25 @@ button[type="submit"]:disabled {
         overflow-x: hidden !important;
     }
     
-    /* Prevent nested scrolling */
+    /* Prevent nested scrolling - REMOVE ALL SCROLLING FROM SECTIONS */
     .container,
     section,
     .about-content,
     .projects,
     .skills,
-    .timeline {
+    .timeline,
+    .contact-content,
+    .contact,
+    .hero,
+    .about,
+    .experience {
         overflow-x: hidden !important;
         overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
     }
     
-    /* Ensure all containers fit */
+    /* Ensure all containers fit - NO SCROLLING */
     .container {
         width: 100% !important;
         max-width: 100% !important;
@@ -1532,6 +1649,7 @@ button[type="submit"]:disabled {
         box-sizing: border-box !important;
         overflow-x: hidden !important;
         overflow-y: visible !important;
+        height: auto !important;
     }
     
     section {
@@ -1543,6 +1661,19 @@ button[type="submit"]:disabled {
         overflow-x: hidden !important;
         overflow-y: visible !important;
         position: relative !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+    
+    /* Remove scrolling from any wrapper */
+    .contact-form-wrapper,
+    .contact-info,
+    .contact-details,
+    .projects-grid,
+    .skills-grid {
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+        height: auto !important;
     }
     
     /* Navigation */
@@ -1804,7 +1935,7 @@ button[type="submit"]:disabled {
     .about-stats {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 0.75rem !important;
-        margin: 1.5rem 0 2rem 0 !important;
+        margin: 1.5rem 0 3rem 0 !important;
         display: grid !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -1828,18 +1959,27 @@ button[type="submit"]:disabled {
         max-width: 100% !important;
     }
     
-    /* Download Resume Button - Fix Overlap */
+    /* Download Resume Button - Fix Overlap - More Aggressive */
     .about-content .btn,
-    .about-content a.btn {
+    .about-content a.btn,
+    .about .btn,
+    .about a.btn {
         display: block !important;
         width: 100% !important;
         max-width: 100% !important;
-        margin: 2rem auto 0 auto !important;
+        margin: 3rem auto 0 auto !important;
         padding: 0.875rem 1.5rem !important;
         text-align: center !important;
         box-sizing: border-box !important;
         position: relative !important;
         clear: both !important;
+        z-index: 1 !important;
+    }
+    
+    /* Ensure stats don't overlap button */
+    .about-stats + .btn,
+    .about-stats + a.btn {
+        margin-top: 3rem !important;
     }
     
     .stat-number {
