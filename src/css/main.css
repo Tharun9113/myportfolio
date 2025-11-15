@@ -2088,7 +2088,7 @@ button[type="submit"]:disabled {
     }
     
     .timeline::before {
-        left: 20px;
+        display: none !important;
     }
     
     .timeline-item {
@@ -2104,9 +2104,8 @@ button[type="submit"]:disabled {
     }
     
     .timeline-dot {
-        left: 20px;
-        width: 16px;
-        height: 16px;
+        left: 0 !important;
+        display: none !important;
     }
     
     .timeline-date {
