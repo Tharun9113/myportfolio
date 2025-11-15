@@ -405,7 +405,7 @@ function renderSkills() {
             if (useEmojiOnMobile) {
                 // On mobile: Show emoji ONLY, don't try to load SVG at all
                 iconHTML = `
-                    <div class="skill-icon-emoji" data-skill-name="${skill.name}" style="font-size: 3rem !important; margin-bottom: 1rem !important; display: block !important; visibility: visible !important; opacity: 1 !important; text-align: center !important; line-height: 1 !important; width: 100% !important; height: auto !important;">${fallbackEmoji}</div>
+                    <div class="skill-icon skill-icon-emoji" data-skill-name="${skill.name}" style="font-size: 3rem !important; margin-bottom: 1rem !important; display: block !important; visibility: visible !important; opacity: 1 !important; text-align: center !important; line-height: 1 !important; width: 100% !important; height: auto !important; min-height: 64px !important; color: var(--text-primary) !important;">${fallbackEmoji}</div>
                 `;
             } else {
                 // On desktop, use normal loading
