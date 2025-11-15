@@ -1623,15 +1623,15 @@ button[type="submit"]:disabled {
     }
     
     /* COMPLETE REMOVAL OF NESTED SCROLLING - ONLY BODY SCROLLS */
-    /* Remove scrolling from EVERYTHING except body */
-    * {
-        overflow-y: visible !important;
-        max-height: none !important;
-    }
-    
     /* Only body can scroll */
     body {
         overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Remove scrolling from all common elements */
+    html {
+        overflow-y: visible !important;
         overflow-x: hidden !important;
     }
     
