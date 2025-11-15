@@ -1622,6 +1622,19 @@ button[type="submit"]:disabled {
         overflow-x: hidden !important;
     }
     
+    /* COMPLETE REMOVAL OF NESTED SCROLLING - ONLY BODY SCROLLS */
+    /* Remove scrolling from EVERYTHING except body */
+    * {
+        overflow-y: visible !important;
+        max-height: none !important;
+    }
+    
+    /* Only body can scroll */
+    body {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+    
     /* Prevent nested scrolling - REMOVE ALL SCROLLING FROM SECTIONS */
     .container,
     section,
@@ -1633,11 +1646,37 @@ button[type="submit"]:disabled {
     .contact,
     .hero,
     .about,
-    .experience {
+    .experience,
+    .nav-menu,
+    .contact-form-wrapper,
+    .contact-info,
+    .contact-details,
+    .projects-grid,
+    .skills-grid,
+    .hero-content,
+    .about-text,
+    .about-stats,
+    .project-card,
+    .skill-item,
+    .timeline-item,
+    .timeline-content,
+    div,
+    main,
+    article,
+    aside,
+    header,
+    footer {
         overflow-x: hidden !important;
         overflow-y: visible !important;
         height: auto !important;
         max-height: none !important;
+    }
+    
+    /* Nav menu - remove scrolling */
+    .nav-menu {
+        max-height: none !important;
+        overflow-y: visible !important;
+        overflow-x: hidden !important;
     }
     
     /* Ensure all containers fit - NO SCROLLING */
@@ -1670,10 +1709,15 @@ button[type="submit"]:disabled {
     .contact-info,
     .contact-details,
     .projects-grid,
-    .skills-grid {
+    .skills-grid,
+    .hero-content,
+    .about-content,
+    .about-text,
+    .about-stats {
         overflow-x: hidden !important;
         overflow-y: visible !important;
         height: auto !important;
+        max-height: none !important;
     }
     
     /* Navigation */
@@ -1692,8 +1736,10 @@ button[type="submit"]:disabled {
         box-shadow: 0 5px 15px var(--shadow);
         transition: var(--transition);
         z-index: 999;
-        max-height: calc(100vh - 70px);
-        overflow-y: auto;
+        max-height: none !important;
+        overflow-y: visible !important;
+        overflow-x: hidden !important;
+        height: auto !important;
     }
     
     .nav-menu.active {
