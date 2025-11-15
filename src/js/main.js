@@ -385,8 +385,11 @@ function renderSkills() {
     const skillsGrid = document.querySelector('.skills-grid');
     if (!skillsGrid) return;
     
-    // Check if mobile - use screen width directly
-    const isMobileScreen = window.innerWidth <= 768;
+    // Check if mobile - use multiple methods for reliability
+    const screenWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+    const isMobileScreen = screenWidth <= 768 || 
+                          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                          ('ontouchstart' in window);
     
     skillsGrid.innerHTML = config.skills.map((skill, index) => {
         // Check if icon is a URL (starts with http) or data URI (starts with data:)
@@ -401,10 +404,10 @@ function renderSkills() {
             const fallbackEmoji = getIconFallback(skill.name);
             const alternativeCDN = getAlternativeCDN(skill.icon);
             
-            // ALWAYS show emoji on mobile screens (width <= 768)
+            // ALWAYS show emoji on mobile - use multiple checks
             if (isMobileScreen) {
-                // On mobile: Show emoji ONLY - simple and direct
-                iconHTML = `<div class="skill-icon-emoji-mobile">${fallbackEmoji}</div>`;
+                // On mobile: Show emoji ONLY - simple and direct with inline styles
+                iconHTML = `<div class="skill-icon-emoji-mobile" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;">${fallbackEmoji}</div>`;
             } else {
                 // On desktop, use normal loading
                 iconHTML = `
@@ -1219,29 +1222,46 @@ document.addEventListener('DOMContentLoaded', () => {
             window.dispatchEvent(event);
         }
         
-        // Force show emojis on mobile immediately - ALWAYS run this
-        setTimeout(() => {
-            // Check if mobile or small screen
-            const isMobile = window.innerWidth <= 768 || isMobileDevice();
+        // Force show emojis on mobile - CRITICAL - runs multiple times
+        const forceShowEmojis = () => {
+            const screenWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+            const isMobile = screenWidth <= 768 || isMobileDevice();
+            
             if (isMobile) {
-                // Force show all emojis with multiple selectors
-                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon.skill-icon-emoji, .skill-item div[data-skill-name]');
-                emojis.forEach(emoji => {
-                    if (emoji && (emoji.textContent || emoji.innerHTML)) {
-                        emoji.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
-                    }
+                // Find ALL possible emoji containers
+                const selectors = [
+                    '.skill-icon-emoji-mobile',
+                    '.skill-icon-emoji',
+                    '.skill-item div[class*="emoji"]',
+                    '.skill-item div[data-skill-name]',
+                    '.skill-item > div:first-child'
+                ];
+                
+                selectors.forEach(selector => {
+                    const elements = document.querySelectorAll(selector);
+                    elements.forEach(el => {
+                        if (el && (el.textContent || el.innerHTML) && el.textContent.trim().length > 0 && !el.classList.contains('skill-name') && !el.classList.contains('skill-level') && !el.classList.contains('skill-description')) {
+                            el.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;';
+                        }
+                    });
                 });
                 
-                // Also check for any divs with emoji content
+                // Also check skill items directly
                 const skillItems = document.querySelectorAll('.skill-item');
                 skillItems.forEach(item => {
-                    const emojiDiv = item.querySelector('div[class*="emoji"], div[class*="skill-icon"]');
-                    if (emojiDiv && (emojiDiv.textContent || emojiDiv.innerHTML) && emojiDiv.textContent.trim().length > 0) {
-                        emojiDiv.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
+                    const firstDiv = item.querySelector('div:first-of-type');
+                    if (firstDiv && firstDiv.textContent && firstDiv.textContent.trim().length > 0 && !firstDiv.classList.contains('skill-name') && !firstDiv.classList.contains('skill-level') && !firstDiv.classList.contains('skill-description')) {
+                        firstDiv.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;';
                     }
                 });
             }
-        }, 50);
+        };
+        
+        // Run immediately and multiple times
+        forceShowEmojis();
+        setTimeout(forceShowEmojis, 100);
+        setTimeout(forceShowEmojis, 500);
+        setTimeout(forceShowEmojis, 1000);
         
         if (isMobileDevice()) {
             
@@ -1255,30 +1275,45 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Also ensure images load when window loads completely
     window.addEventListener('load', () => {
-        // ALWAYS try to show emojis on mobile
-        setTimeout(() => {
-            const isMobile = window.innerWidth <= 768 || isMobileDevice();
+        // Force show emojis - runs multiple times
+        const forceShowEmojisOnLoad = () => {
+            const screenWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+            const isMobile = screenWidth <= 768 || isMobileDevice();
+            
             if (isMobile) {
-                // Force show all emojis with multiple selectors
-                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon.skill-icon-emoji, .skill-item div[data-skill-name], .skill-item div[class*="emoji"]');
-                emojis.forEach(emoji => {
-                    if (emoji && (emoji.textContent || emoji.innerHTML) && emoji.textContent.trim().length > 0) {
-                        emoji.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
-                    }
+                // Find ALL possible emoji containers
+                const selectors = [
+                    '.skill-icon-emoji-mobile',
+                    '.skill-icon-emoji',
+                    '.skill-item div[class*="emoji"]',
+                    '.skill-item div[data-skill-name]',
+                    '.skill-item > div:first-child'
+                ];
+                
+                selectors.forEach(selector => {
+                    const elements = document.querySelectorAll(selector);
+                    elements.forEach(el => {
+                        if (el && (el.textContent || el.innerHTML) && el.textContent.trim().length > 0 && !el.classList.contains('skill-name') && !el.classList.contains('skill-level') && !el.classList.contains('skill-description')) {
+                            el.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;';
+                        }
+                    });
                 });
                 
-                // Also check skill items directly
+                // Check skill items directly
                 const skillItems = document.querySelectorAll('.skill-item');
                 skillItems.forEach(item => {
-                    const children = item.children;
-                    for (let child of children) {
-                        if (child.tagName === 'DIV' && (child.textContent || child.innerHTML) && child.textContent.trim().length > 0 && !child.classList.contains('skill-name') && !child.classList.contains('skill-level') && !child.classList.contains('skill-description')) {
-                            child.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important;';
-                        }
+                    const firstDiv = item.querySelector('div:first-of-type');
+                    if (firstDiv && firstDiv.textContent && firstDiv.textContent.trim().length > 0 && !firstDiv.classList.contains('skill-name') && !firstDiv.classList.contains('skill-level') && !firstDiv.classList.contains('skill-description')) {
+                        firstDiv.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;';
                     }
                 });
             }
-        }, 50);
+        };
+        
+        forceShowEmojisOnLoad();
+        setTimeout(forceShowEmojisOnLoad, 100);
+        setTimeout(forceShowEmojisOnLoad, 500);
+        setTimeout(forceShowEmojisOnLoad, 1000);
         
         if (isMobileDevice()) {
             

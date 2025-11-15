@@ -878,7 +878,7 @@ section {
     min-height: 64px !important;
 }
 
-/* Simple mobile emoji class - always visible */
+/* Simple mobile emoji class - always visible - ULTRA AGGRESSIVE */
 .skill-icon-emoji-mobile {
     font-size: 3rem !important;
     margin-bottom: 1rem !important;
@@ -886,10 +886,28 @@ section {
     visibility: visible !important;
     opacity: 1 !important;
     text-align: center !important;
-    line-height: 1 !important;
+    line-height: 64px !important;
     width: 100% !important;
     height: 64px !important;
-    line-height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+}
+
+/* Force visibility for ALL mobile emoji classes */
+@media (max-width: 768px) {
+    .skill-icon-emoji-mobile,
+    .skill-item .skill-icon-emoji-mobile,
+    .skill-item div.skill-icon-emoji-mobile {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 3rem !important;
+        margin: 0 auto 1rem !important;
+        text-align: center !important;
+        line-height: 64px !important;
+        height: 64px !important;
+        width: 100% !important;
+    }
 }
 
 /* Ensure emoji is always visible on mobile - SIMPLE AND DIRECT */
