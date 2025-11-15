@@ -325,13 +325,19 @@ function animateValue(element, start, end, duration) {
 }
 
 // ========================================
-// Mobile Detection
+// Mobile Detection - More aggressive
 // ========================================
 function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-           (window.innerWidth <= 768) ||
-           ('ontouchstart' in window);
+    // Always return true if screen width is small or touch is available
+    const isSmallScreen = window.innerWidth <= 768;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    return isSmallScreen || isTouchDevice || isMobileUA;
 }
+
+// Store mobile status globally
+window.IS_MOBILE = isMobileDevice();
 
 // ========================================
 // Icon Fallback Helper
@@ -393,50 +399,13 @@ function renderSkills() {
             const fallbackEmoji = getIconFallback(skill.name);
             const alternativeCDN = getAlternativeCDN(skill.icon);
             
-            // On mobile, show emoji immediately if CDN might be blocked
-            const useEmojiOnMobile = isMobileDevice();
+            // On mobile, ALWAYS show emoji first, don't even try SVG
+            const useEmojiOnMobile = window.IS_MOBILE !== undefined ? window.IS_MOBILE : isMobileDevice();
             
             if (useEmojiOnMobile) {
-                // On mobile, show emoji immediately and try to load icon in background
+                // On mobile: Show emoji ONLY, don't try to load SVG at all
                 iconHTML = `
-                    <div class="skill-icon-emoji" style="font-size: 3rem !important; margin-bottom: 1rem !important; display: block !important; visibility: visible !important; opacity: 1 !important; text-align: center !important; line-height: 1 !important;">${fallbackEmoji}</div>
-                    <img 
-                        id="${iconId}" 
-                        src="${skill.icon}" 
-                        alt="${skill.name}" 
-                        class="skill-icon-img" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer"
-                        style="display: none !important; opacity: 0 !important; visibility: hidden !important; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem; position: absolute; top: 0; left: 50%; transform: translateX(-50%);"
-                        onload="
-                            try {
-                                this.style.display = 'block';
-                                this.style.opacity = '1';
-                                this.style.visibility = 'visible';
-                                const emoji = this.parentElement.querySelector('.skill-icon-emoji');
-                                if (emoji) {
-                                    emoji.style.display = 'none';
-                                }
-                            } catch(e) { console.error('Error showing icon:', e); }
-                        "
-                        onerror="
-                            const img = this;
-                            const altSrc = '${alternativeCDN || ''}';
-                            if (altSrc && img.src !== altSrc && !img.dataset.triedAlt) {
-                                img.dataset.triedAlt = 'true';
-                                img.src = altSrc;
-                            } else {
-                                img.style.display = 'none';
-                                // Ensure emoji stays visible
-                                const emoji = img.parentElement.querySelector('.skill-icon-emoji');
-                                if (emoji) {
-                                    emoji.style.display = 'block';
-                                    emoji.style.visibility = 'visible';
-                                    emoji.style.opacity = '1';
-                                }
-                            }
-                        "
-                    />
+                    <div class="skill-icon-emoji" data-skill-name="${skill.name}" style="font-size: 3rem !important; margin-bottom: 1rem !important; display: block !important; visibility: visible !important; opacity: 1 !important; text-align: center !important; line-height: 1 !important; width: 100% !important; height: auto !important;">${fallbackEmoji}</div>
                 `;
             } else {
                 // On desktop, use normal loading
@@ -680,12 +649,16 @@ function renderProjectsGrid(filter) {
         // Create unique ID for this image
         const imageId = `project-img-${index}-${Date.now()}`;
         
+        // On mobile, show placeholder immediately
+        const isMobile = window.IS_MOBILE !== undefined ? window.IS_MOBILE : isMobileDevice();
+        const initialImageSrc = isMobile ? placeholderImage : imageSrc;
+        
         return `
         <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}">
-            <div class="project-image" style="position: relative; overflow: hidden; background: var(--bg-secondary); min-height: 200px;">
+            <div class="project-image" style="position: relative; overflow: hidden; background: var(--bg-secondary) !important; min-height: 200px !important; display: block !important; visibility: visible !important;">
                 <img 
                     id="${imageId}"
-                    src="${imageSrc}" 
+                    src="${initialImageSrc}" 
                     alt="${project.title}" 
                     loading="lazy" 
                     referrerpolicy="no-referrer" 
@@ -734,8 +707,19 @@ function renderProjectsGrid(filter) {
                         this.style.width = '100%';
                         this.style.height = '100%';
                         this.style.objectFit = 'cover';
+                        // On mobile, try to load actual image after placeholder shows
+                        if (window.IS_MOBILE && this.src === '${placeholderImage}' && !this.dataset.triedReal) {
+                            this.dataset.triedReal = 'true';
+                            setTimeout(() => {
+                                const realImg = new Image();
+                                realImg.onload = () => {
+                                    this.src = '${imageSrc}';
+                                };
+                                realImg.src = '${imageSrc}';
+                            }, 500);
+                        }
                     " 
-                    style="display: block !important; opacity: 1 !important; visibility: visible !important; width: 100% !important; height: 100% !important; object-fit: cover !important; position: relative !important; z-index: 1 !important;"
+                    style="display: block !important; opacity: 1 !important; visibility: visible !important; width: 100% !important; height: 100% !important; object-fit: cover !important; position: relative !important; z-index: 1 !important; background: var(--bg-secondary) !important;"
                 />
                 <div class="project-overlay">
                     ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer">🔗</a>` : ''}
@@ -1193,7 +1177,13 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
 // ========================================
 // Initialize Everything
 // ========================================
+// Initialize mobile detection immediately
+window.IS_MOBILE = isMobileDevice();
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Re-check mobile status
+    window.IS_MOBILE = isMobileDevice();
+    
     updateHeroSection();
     updateAboutSection();
     updateContactInfo();

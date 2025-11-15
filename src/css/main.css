@@ -875,10 +875,43 @@ section {
     line-height: 1 !important;
     width: 100% !important;
     height: auto !important;
+    min-height: 64px !important;
 }
 
-/* Ensure emoji is always visible on mobile */
+/* Ensure emoji is always visible on mobile - AGGRESSIVE */
 @media (max-width: 768px) {
+    .skill-icon-emoji {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 3rem !important;
+        margin: 0 auto 1rem !important;
+    }
+    
+    .skill-item {
+        position: relative;
+        min-height: 150px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
+    
+    /* Hide SVG icons on mobile completely */
+    .skill-item .skill-icon-img {
+        display: none !important;
+    }
+    
+    /* Force emoji to show */
+    .skill-item .skill-icon-emoji {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Also for touch devices */
+@media (hover: none) and (pointer: coarse) {
     .skill-icon-emoji {
         display: block !important;
         visibility: visible !important;
@@ -886,9 +919,8 @@ section {
         font-size: 3rem !important;
     }
     
-    .skill-item {
-        position: relative;
-        min-height: 120px;
+    .skill-item .skill-icon-img {
+        display: none !important;
     }
 }
 
@@ -2357,12 +2389,35 @@ button[type="submit"]:disabled {
     }
     
     /* Ensure project images are visible */
+    .project-image {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        min-height: 200px !important;
+        background: var(--bg-secondary) !important;
+    }
+    
     .project-image img {
         display: block !important;
         opacity: 1 !important;
         visibility: visible !important;
         width: 100% !important;
         height: 100% !important;
+        min-height: 200px !important;
+        background: var(--bg-secondary) !important;
+    }
+    
+    /* Ensure project cards are visible */
+    .project-card {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .projects-grid {
+        display: grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     /* Override any GSAP transforms on sections */
