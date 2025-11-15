@@ -397,7 +397,9 @@ function renderSkills() {
         if (skill.icon === 'DSA_TEXT_ICON') {
             iconHTML = '<div class="skill-icon skill-icon-text">DSA</div>';
         } else if (isImageIcon) {
+            const iconId = `skill-icon-${index}-${Date.now()}`;
             const fallbackEmoji = getIconFallback(skill.name);
+            const alternativeCDN = getAlternativeCDN(skill.icon);
             
             // ALWAYS show emoji on mobile screens (width <= 768)
             if (isMobileScreen) {
