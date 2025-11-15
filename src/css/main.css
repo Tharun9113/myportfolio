@@ -629,10 +629,14 @@ section {
     padding: var(--section-padding);
     position: relative;
     overflow: visible;
+    overflow-y: visible;
+    overflow-x: hidden;
     width: 100%;
     display: block;
     opacity: 1;
     visibility: visible;
+    height: auto;
+    max-height: none;
 }
 
 .section-header {
@@ -1691,7 +1695,13 @@ button[type="submit"]:disabled {
         height: auto !important;
     }
     
-    section {
+    section,
+    section.about,
+    section.skills,
+    section.projects,
+    section.hero,
+    section.experience,
+    section.contact {
         width: 100% !important;
         max-width: 100% !important;
         padding-left: 0 !important;
@@ -1702,6 +1712,7 @@ button[type="submit"]:disabled {
         position: relative !important;
         height: auto !important;
         max-height: none !important;
+        overflow: visible !important;
     }
     
     /* Remove scrolling from any wrapper */
@@ -1931,13 +1942,17 @@ button[type="submit"]:disabled {
         max-width: 100% !important;
     }
     
-    /* About Section - Better Mobile Layout - No Overlap */
-    .about {
+    /* About Section - Better Mobile Layout - No Overlap - NO SCROLLING */
+    .about,
+    #about {
         padding: 2rem 1rem !important;
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
         overflow-x: hidden !important;
+        overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
     }
     
     .about-content {
@@ -2139,8 +2154,9 @@ button[type="submit"]:disabled {
         color: var(--text-secondary) !important;
     }
     
-    /* Projects Section - Better Mobile Layout - No Overlap */
-    .projects {
+    /* Projects Section - Better Mobile Layout - No Overlap - NO SCROLLING */
+    .projects,
+    #projects {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2149,6 +2165,9 @@ button[type="submit"]:disabled {
         max-width: 100% !important;
         box-sizing: border-box !important;
         overflow-x: hidden !important;
+        overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
     }
     
     .project-filters {
@@ -2807,13 +2826,18 @@ button[type="submit"]:disabled {
         visibility: visible !important;
     }
     
-    /* Force skills section to be visible - Better Layout */
+    /* Force skills section to be visible - Better Layout - NO SCROLLING */
     .skills-section,
+    .skills,
     #skills {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         padding: 2rem 1rem !important;
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
     }
     
     .skills-grid {
