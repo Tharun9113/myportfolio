@@ -7,7 +7,7 @@ const config = {
     // Personal Information
     personalInfo: {
         name: 'Tharun Kumar N',
-        title: 'Computer Science Engineering Student | Full Stack Developer',
+        title: 'Aspiring Software Engineer',
         bio: 'Passionate Computer Science Engineering student with expertise in software development, building innovative web applications and mobile apps. Proficient in DSA, multiple programming languages, and modern frameworks.',
         email: 'tharunkumar9113@gmail.com',
         phone: '+91 9113096206',
