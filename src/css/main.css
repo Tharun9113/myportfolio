@@ -1715,9 +1715,31 @@ button[type="submit"]:disabled {
     }
     
     .about-stats {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin: 1.5rem 0;
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+        margin: 1.5rem 0 !important;
+        display: grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+    }
+    
+    .stat-item {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .stat-number {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .stat-label {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .stat-item {
@@ -1732,19 +1754,28 @@ button[type="submit"]:disabled {
         font-size: 0.8rem;
     }
     
-    /* Skills Section */
+    /* Skills Section - FORCE VISIBLE */
     .skills {
-        display: block;
-        visibility: visible;
-        opacity: 1;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .skills-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1.25rem;
-        display: grid;
-        visibility: visible;
-        opacity: 1;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+        gap: 1.25rem !important;
+        display: grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+    }
+    
+    .skill-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .skill-item {
@@ -2448,6 +2479,39 @@ button[type="submit"]:disabled {
         visibility: visible !important;
     }
     
+    /* Force skills section to be visible */
+    .skills-section,
+    #skills {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .skills-grid {
+        display: grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+        gap: 1.25rem !important;
+        width: 100% !important;
+    }
+    
+    .skill-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        min-height: 150px !important;
+    }
+    
+    .skill-name,
+    .skill-level {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
     /* Ensure project images are visible */
     .project-image {
         display: block !important;
@@ -2514,7 +2578,8 @@ button[type="submit"]:disabled {
     .skill-item .skill-icon-emoji,
     .skill-item div.skill-icon-emoji,
     .skill-item .skill-icon.skill-icon-emoji,
-    .skill-item .skill-icon-emoji-mobile {
+    .skill-item .skill-icon-emoji-mobile,
+    .skill-icon-emoji-mobile {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2523,6 +2588,23 @@ button[type="submit"]:disabled {
         height: 64px !important;
         line-height: 64px !important;
         text-align: center !important;
+        width: 100% !important;
+    }
+    
+    /* Force about stats to show */
+    .about-stats {
+        display: grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+        width: 100% !important;
+    }
+    
+    .stat-item {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     /* Override any GSAP transforms on sections */

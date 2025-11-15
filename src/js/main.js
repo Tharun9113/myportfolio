@@ -385,11 +385,9 @@ function renderSkills() {
     const skillsGrid = document.querySelector('.skills-grid');
     if (!skillsGrid) return;
     
-    // Check if mobile - use multiple methods for reliability
-    const screenWidth = window.innerWidth || document.documentElement.clientWidth || 0;
-    const isMobileScreen = screenWidth <= 768 || 
-                          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-                          ('ontouchstart' in window);
+    // Check if mobile - use screen width only (more reliable)
+    const screenWidth = window.innerWidth || document.documentElement.clientWidth || screen.width || 0;
+    const isMobileScreen = screenWidth <= 768;
     
     skillsGrid.innerHTML = config.skills.map((skill, index) => {
         // Check if icon is a URL (starts with http) or data URI (starts with data:)
@@ -404,12 +402,12 @@ function renderSkills() {
             const fallbackEmoji = getIconFallback(skill.name);
             const alternativeCDN = getAlternativeCDN(skill.icon);
             
-            // ALWAYS show emoji on mobile - use multiple checks
+            // On mobile: Show emoji, on desktop: show SVG with emoji fallback
             if (isMobileScreen) {
-                // On mobile: Show emoji ONLY - simple and direct with inline styles
-                iconHTML = `<div class="skill-icon-emoji-mobile" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;">${fallbackEmoji}</div>`;
+                // Mobile: Show emoji with strong inline styles
+                iconHTML = `<div class="skill-icon-emoji-mobile" style="display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important; color: inherit !important;">${fallbackEmoji}</div>`;
             } else {
-                // On desktop, use normal loading
+                // Desktop: Show SVG icon with emoji fallback on error
                 iconHTML = `
                     <img 
                         id="${iconId}" 
@@ -457,6 +455,16 @@ function renderSkills() {
         </div>
     `;
     }).join('');
+    
+    // Force show emojis on mobile after rendering
+    if (isMobileScreen) {
+        setTimeout(() => {
+            const emojis = document.querySelectorAll('.skill-icon-emoji-mobile');
+            emojis.forEach(emoji => {
+                emoji.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; font-size: 3rem !important; margin: 0 auto 1rem !important; text-align: center !important; line-height: 64px !important; height: 64px !important; width: 100% !important;';
+            });
+        }, 50);
+    }
 }
 
 // ========================================
