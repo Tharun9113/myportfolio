@@ -1271,11 +1271,11 @@ section {
 /* ========================================
    Contact Section
    ======================================== */
-    .contact-content {
-        display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: 4rem;
-    }
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 4rem;
+}
     
     .contact-info h3 {
         font-size: 2rem;
