@@ -385,6 +385,9 @@ function renderSkills() {
     const skillsGrid = document.querySelector('.skills-grid');
     if (!skillsGrid) return;
     
+    // Check if mobile - use screen width directly
+    const isMobileScreen = window.innerWidth <= 768;
+    
     skillsGrid.innerHTML = config.skills.map((skill, index) => {
         // Check if icon is a URL (starts with http) or data URI (starts with data:)
         const isImageIcon = skill.icon && (skill.icon.startsWith('http') || skill.icon.startsWith('//') || skill.icon.startsWith('data:'));
@@ -394,19 +397,12 @@ function renderSkills() {
         if (skill.icon === 'DSA_TEXT_ICON') {
             iconHTML = '<div class="skill-icon skill-icon-text">DSA</div>';
         } else if (isImageIcon) {
-            // Create a unique ID for this icon
-            const iconId = `skill-icon-${index}-${Date.now()}`;
             const fallbackEmoji = getIconFallback(skill.name);
-            const alternativeCDN = getAlternativeCDN(skill.icon);
             
-            // On mobile, ALWAYS show emoji first, don't even try SVG
-            const useEmojiOnMobile = window.IS_MOBILE !== undefined ? window.IS_MOBILE : isMobileDevice();
-            
-            if (useEmojiOnMobile) {
-                // On mobile: Show emoji ONLY, don't try to load SVG at all
-                iconHTML = `
-                    <div class="skill-icon skill-icon-emoji" data-skill-name="${skill.name}" style="font-size: 3rem !important; margin-bottom: 1rem !important; display: block !important; visibility: visible !important; opacity: 1 !important; text-align: center !important; line-height: 1 !important; width: 100% !important; height: auto !important; min-height: 64px !important; color: var(--text-primary) !important;">${fallbackEmoji}</div>
-                `;
+            // ALWAYS show emoji on mobile screens (width <= 768)
+            if (isMobileScreen) {
+                // On mobile: Show emoji ONLY - simple and direct
+                iconHTML = `<div class="skill-icon-emoji-mobile">${fallbackEmoji}</div>`;
             } else {
                 // On desktop, use normal loading
                 iconHTML = `

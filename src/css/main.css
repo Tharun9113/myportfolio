@@ -878,8 +878,34 @@ section {
     min-height: 64px !important;
 }
 
-/* Ensure emoji is always visible on mobile - AGGRESSIVE */
+/* Simple mobile emoji class - always visible */
+.skill-icon-emoji-mobile {
+    font-size: 3rem !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    text-align: center !important;
+    line-height: 1 !important;
+    width: 100% !important;
+    height: 64px !important;
+    line-height: 64px !important;
+}
+
+/* Ensure emoji is always visible on mobile - SIMPLE AND DIRECT */
 @media (max-width: 768px) {
+    .skill-icon-emoji-mobile {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 3rem !important;
+        margin: 0 auto 1rem !important;
+        width: 100% !important;
+        text-align: center !important;
+        line-height: 64px !important;
+        height: 64px !important;
+    }
+    
     .skill-icon-emoji,
     .skill-item .skill-icon-emoji,
     .skill-icon.skill-icon-emoji {
@@ -890,8 +916,8 @@ section {
         margin: 0 auto 1rem !important;
         width: 100% !important;
         text-align: center !important;
-        line-height: 1 !important;
-        min-height: 64px !important;
+        line-height: 64px !important;
+        height: 64px !important;
     }
     
     .skill-item {
@@ -911,11 +937,14 @@ section {
     /* Force ALL skill icons with emoji class to show */
     .skill-item div.skill-icon-emoji,
     .skill-item div[class*="skill-icon-emoji"],
-    .skill-item .skill-icon.skill-icon-emoji {
+    .skill-item .skill-icon.skill-icon-emoji,
+    .skill-item .skill-icon-emoji-mobile {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         font-size: 3rem !important;
+        height: 64px !important;
+        line-height: 64px !important;
     }
 }
 
@@ -2466,12 +2495,16 @@ button[type="submit"]:disabled {
     /* Force skill icons/emojis to show on mobile */
     .skill-item .skill-icon-emoji,
     .skill-item div.skill-icon-emoji,
-    .skill-item .skill-icon.skill-icon-emoji {
+    .skill-item .skill-icon.skill-icon-emoji,
+    .skill-item .skill-icon-emoji-mobile {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         font-size: 3rem !important;
         margin: 0 auto 1rem !important;
+        height: 64px !important;
+        line-height: 64px !important;
+        text-align: center !important;
     }
     
     /* Override any GSAP transforms on sections */
