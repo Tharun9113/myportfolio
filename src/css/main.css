@@ -866,11 +866,30 @@ section {
 }
 
 .skill-icon-emoji {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    display: block;
-    text-align: center;
-    line-height: 1;
+    font-size: 3rem !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    text-align: center !important;
+    line-height: 1 !important;
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Ensure emoji is always visible on mobile */
+@media (max-width: 768px) {
+    .skill-icon-emoji {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 3rem !important;
+    }
+    
+    .skill-item {
+        position: relative;
+        min-height: 120px;
+    }
 }
 
 .skill-item:hover .skill-icon-img {

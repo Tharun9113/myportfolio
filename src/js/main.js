@@ -397,9 +397,9 @@ function renderSkills() {
             const useEmojiOnMobile = isMobileDevice();
             
             if (useEmojiOnMobile) {
-                // On mobile, try to load icon but show emoji immediately as fallback
+                // On mobile, show emoji immediately and try to load icon in background
                 iconHTML = `
-                    <div class="skill-icon-emoji" style="font-size: 3rem; margin-bottom: 1rem; display: block;">${fallbackEmoji}</div>
+                    <div class="skill-icon-emoji" style="font-size: 3rem !important; margin-bottom: 1rem !important; display: block !important; visibility: visible !important; opacity: 1 !important; text-align: center !important; line-height: 1 !important;">${fallbackEmoji}</div>
                     <img 
                         id="${iconId}" 
                         src="${skill.icon}" 
@@ -407,13 +407,17 @@ function renderSkills() {
                         class="skill-icon-img" 
                         loading="lazy" 
                         referrerpolicy="no-referrer"
-                        style="display: none; opacity: 0; visibility: hidden; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem;"
+                        style="display: none !important; opacity: 0 !important; visibility: hidden !important; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem; position: absolute; top: 0; left: 50%; transform: translateX(-50%);"
                         onload="
-                            this.style.display = 'block';
-                            this.style.opacity = '1';
-                            this.style.visibility = 'visible';
-                            const emoji = this.parentElement.querySelector('.skill-icon-emoji');
-                            if (emoji) emoji.style.display = 'none';
+                            try {
+                                this.style.display = 'block';
+                                this.style.opacity = '1';
+                                this.style.visibility = 'visible';
+                                const emoji = this.parentElement.querySelector('.skill-icon-emoji');
+                                if (emoji) {
+                                    emoji.style.display = 'none';
+                                }
+                            } catch(e) { console.error('Error showing icon:', e); }
                         "
                         onerror="
                             const img = this;
@@ -423,6 +427,13 @@ function renderSkills() {
                                 img.src = altSrc;
                             } else {
                                 img.style.display = 'none';
+                                // Ensure emoji stays visible
+                                const emoji = img.parentElement.querySelector('.skill-icon-emoji');
+                                if (emoji) {
+                                    emoji.style.display = 'block';
+                                    emoji.style.visibility = 'visible';
+                                    emoji.style.opacity = '1';
+                                }
                             }
                         "
                     />
@@ -496,6 +507,14 @@ function preloadImage(src) {
 function ensureImagesLoad() {
     if (!isMobileDevice()) return; // Only run on mobile
     
+    // First, ensure all emojis are visible
+    const emojis = document.querySelectorAll('.skill-icon-emoji');
+    emojis.forEach(emoji => {
+        emoji.style.display = 'block';
+        emoji.style.visibility = 'visible';
+        emoji.style.opacity = '1';
+    });
+    
     // Ensure all skill icons load on mobile
     const skillIcons = document.querySelectorAll('.skill-icon-img');
     skillIcons.forEach((img) => {
@@ -505,13 +524,24 @@ function ensureImagesLoad() {
             img.style.opacity = '1';
             img.style.visibility = 'visible';
             const emoji = img.parentElement.querySelector('.skill-icon-emoji');
-            if (emoji) emoji.style.display = 'none';
+            if (emoji) {
+                emoji.style.display = 'none';
+            }
         } else {
-            // Image failed, try alternative CDN
+            // Image failed or not loaded, ensure emoji is visible
+            const emoji = img.parentElement.querySelector('.skill-icon-emoji');
+            if (emoji) {
+                emoji.style.display = 'block';
+                emoji.style.visibility = 'visible';
+                emoji.style.opacity = '1';
+            }
+            
+            // Try alternative CDN if not already tried
             const originalSrc = img.src;
-            if (originalSrc && originalSrc.includes('cdn.jsdelivr.net')) {
+            if (originalSrc && originalSrc.includes('cdn.jsdelivr.net') && !img.dataset.triedAlt) {
                 const altSrc = getAlternativeCDN(originalSrc);
                 if (altSrc) {
+                    img.dataset.triedAlt = 'true';
                     img.src = altSrc;
                 }
             }
@@ -525,13 +555,17 @@ function ensureImagesLoad() {
         img.style.display = 'block';
         img.style.opacity = '1';
         img.style.visibility = 'visible';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
         
         if (!img.complete || img.naturalHeight === 0) {
             // Image failed to load, try alternative paths
             const originalSrc = img.src;
             const baseUrl = window.location.origin;
             
-            if (originalSrc && originalSrc.includes('/images/')) {
+            if (originalSrc && originalSrc.includes('/images/') && !img.dataset.triedPaths) {
+                img.dataset.triedPaths = 'true';
                 // Try different path variations
                 const altPaths = [
                     baseUrl + '/images/' + originalSrc.split('/images/').pop(),
@@ -551,8 +585,9 @@ function ensureImagesLoad() {
                 };
                 
                 setTimeout(tryNextPath, 200);
-            } else {
-                // Retry original source
+            } else if (!img.dataset.triedRetry) {
+                // Retry original source once
+                img.dataset.triedRetry = 'true';
                 setTimeout(() => {
                     img.src = originalSrc;
                 }, 200);
@@ -647,7 +682,7 @@ function renderProjectsGrid(filter) {
         
         return `
         <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}">
-            <div class="project-image">
+            <div class="project-image" style="position: relative; overflow: hidden; background: var(--bg-secondary); min-height: 200px;">
                 <img 
                     id="${imageId}"
                     src="${imageSrc}" 
@@ -672,6 +707,9 @@ function renderProjectsGrid(filter) {
                                 if (pathIndex < altPaths.length && img.src !== '${placeholderImage}') {
                                     img.src = altPaths[pathIndex];
                                     pathIndex++;
+                                    if (pathIndex < altPaths.length) {
+                                        setTimeout(tryNextPath, 200);
+                                    }
                                 } else {
                                     img.onerror = null;
                                     img.src = '${placeholderImage}';
@@ -693,8 +731,11 @@ function renderProjectsGrid(filter) {
                         this.style.opacity = '1';
                         this.style.display = 'block';
                         this.style.visibility = 'visible';
+                        this.style.width = '100%';
+                        this.style.height = '100%';
+                        this.style.objectFit = 'cover';
                     " 
-                    style="display: block; opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover;"
+                    style="display: block !important; opacity: 1 !important; visibility: visible !important; width: 100% !important; height: 100% !important; object-fit: cover !important; position: relative !important; z-index: 1 !important;"
                 />
                 <div class="project-overlay">
                     ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer">🔗</a>` : ''}
@@ -1186,18 +1227,36 @@ document.addEventListener('DOMContentLoaded', () => {
             window.dispatchEvent(event);
         }
         
-        // Ensure images load on mobile devices
-        if (window.innerWidth <= 768) {
+        // Force show emojis on mobile immediately
+        if (isMobileDevice()) {
+            const emojis = document.querySelectorAll('.skill-icon-emoji');
+            emojis.forEach(emoji => {
+                emoji.style.display = 'block';
+                emoji.style.visibility = 'visible';
+                emoji.style.opacity = '1';
+            });
+            
+            // Ensure images load on mobile devices
             ensureImagesLoad();
-            // Retry after a delay to handle slow network connections
-            setTimeout(ensureImagesLoad, 1000);
+            // Retry after delays to handle slow network connections
+            setTimeout(ensureImagesLoad, 500);
+            setTimeout(ensureImagesLoad, 1500);
         }
     }, 100);
     
     // Also ensure images load when window loads completely
     window.addEventListener('load', () => {
-        if (window.innerWidth <= 768) {
+        if (isMobileDevice()) {
+            // Force show emojis
+            const emojis = document.querySelectorAll('.skill-icon-emoji');
+            emojis.forEach(emoji => {
+                emoji.style.display = 'block';
+                emoji.style.visibility = 'visible';
+                emoji.style.opacity = '1';
+            });
+            
             ensureImagesLoad();
+            setTimeout(ensureImagesLoad, 1000);
         }
     });
 });
