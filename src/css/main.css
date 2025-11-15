@@ -2420,6 +2420,25 @@ button[type="submit"]:disabled {
         opacity: 1 !important;
     }
     
+    /* Ensure timeline is visible on mobile */
+    .timeline {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .timeline-item {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .timeline-content {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
     /* Override any GSAP transforms on sections */
     section[data-aos],
     section[data-aos].aos-animate,

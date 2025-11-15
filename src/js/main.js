@@ -608,6 +608,22 @@ function renderProjects() {
             renderProjectsGrid(filter);
         });
     });
+    
+    // Add click handlers to project cards for GitHub links
+    setTimeout(() => {
+        const projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(card => {
+            const githubUrl = card.getAttribute('data-github');
+            if (githubUrl) {
+                card.addEventListener('click', (e) => {
+                    // Don't navigate if clicking on overlay links
+                    if (!e.target.closest('.project-overlay')) {
+                        window.open(githubUrl, '_blank', 'noopener,noreferrer');
+                    }
+                });
+            }
+        });
+    }, 100);
 }
 
 function renderProjectsGrid(filter) {
@@ -649,25 +665,22 @@ function renderProjectsGrid(filter) {
         // Create unique ID for this image
         const imageId = `project-img-${index}-${Date.now()}`;
         
-        // On mobile, show placeholder immediately
-        const isMobile = window.IS_MOBILE !== undefined ? window.IS_MOBILE : isMobileDevice();
-        const initialImageSrc = isMobile ? placeholderImage : imageSrc;
-        
+        // Always try to load real image, but show placeholder as fallback
         return `
-        <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}">
+        <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}" data-github="${project.github || ''}" style="cursor: ${project.github ? 'pointer' : 'default'};">
             <div class="project-image" style="position: relative; overflow: hidden; background: var(--bg-secondary) !important; min-height: 200px !important; display: block !important; visibility: visible !important;">
                 <img 
                     id="${imageId}"
-                    src="${initialImageSrc}" 
+                    src="${imageSrc}" 
                     alt="${project.title}" 
                     loading="lazy" 
                     referrerpolicy="no-referrer" 
                     onerror="
                         const img = this;
                         const baseUrl = window.location.origin;
-                        if (img.src !== '${placeholderImage}' && !img.dataset.triedPlaceholder) {
+                        if (!img.dataset.triedPlaceholder) {
                             img.dataset.triedPlaceholder = 'true';
-                            // Try alternative paths
+                            // Try alternative paths first
                             const currentSrc = img.src;
                             const altPaths = [
                                 baseUrl + '/images/' + currentSrc.split('/images/').pop(),
@@ -677,22 +690,24 @@ function renderProjectsGrid(filter) {
                             ];
                             let pathIndex = 0;
                             const tryNextPath = () => {
-                                if (pathIndex < altPaths.length && img.src !== '${placeholderImage}') {
+                                if (pathIndex < altPaths.length) {
                                     img.src = altPaths[pathIndex];
                                     pathIndex++;
                                     if (pathIndex < altPaths.length) {
                                         setTimeout(tryNextPath, 200);
+                                    } else {
+                                        // All paths failed, use placeholder
+                                        img.onerror = null;
+                                        img.src = '${placeholderImage}';
+                                        img.style.display = 'block';
+                                        img.style.opacity = '1';
+                                        img.style.visibility = 'visible';
                                     }
-                                } else {
-                                    img.onerror = null;
-                                    img.src = '${placeholderImage}';
-                                    img.style.display = 'block';
-                                    img.style.opacity = '1';
-                                    img.style.visibility = 'visible';
                                 }
                             };
                             setTimeout(tryNextPath, 100);
                         } else {
+                            // Already tried, use placeholder
                             img.onerror = null;
                             img.src = '${placeholderImage}';
                             img.style.display = 'block';
@@ -707,23 +722,12 @@ function renderProjectsGrid(filter) {
                         this.style.width = '100%';
                         this.style.height = '100%';
                         this.style.objectFit = 'cover';
-                        // On mobile, try to load actual image after placeholder shows
-                        if (window.IS_MOBILE && this.src === '${placeholderImage}' && !this.dataset.triedReal) {
-                            this.dataset.triedReal = 'true';
-                            setTimeout(() => {
-                                const realImg = new Image();
-                                realImg.onload = () => {
-                                    this.src = '${imageSrc}';
-                                };
-                                realImg.src = '${imageSrc}';
-                            }, 500);
-                        }
                     " 
                     style="display: block !important; opacity: 1 !important; visibility: visible !important; width: 100% !important; height: 100% !important; object-fit: cover !important; position: relative !important; z-index: 1 !important; background: var(--bg-secondary) !important;"
                 />
                 <div class="project-overlay">
-                    ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer">🔗</a>` : ''}
-                    ${project.github ? `<a href="${project.github}" target="_blank" aria-label="View Code" rel="noopener noreferrer">📂</a>` : ''}
+                    ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer" onclick="event.stopPropagation();">🔗</a>` : ''}
+                    ${project.github ? `<a href="${project.github}" target="_blank" aria-label="View Code" rel="noopener noreferrer" onclick="event.stopPropagation();">📂</a>` : ''}
                 </div>
             </div>
             <div class="project-content">
@@ -1219,12 +1223,17 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Force show emojis on mobile immediately
         if (isMobileDevice()) {
-            const emojis = document.querySelectorAll('.skill-icon-emoji');
-            emojis.forEach(emoji => {
-                emoji.style.display = 'block';
-                emoji.style.visibility = 'visible';
-                emoji.style.opacity = '1';
-            });
+            // Force show all emojis
+            setTimeout(() => {
+                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon');
+                emojis.forEach(emoji => {
+                    if (emoji.textContent && emoji.textContent.trim().length > 0) {
+                        emoji.style.display = 'block';
+                        emoji.style.visibility = 'visible';
+                        emoji.style.opacity = '1';
+                    }
+                });
+            }, 50);
             
             // Ensure images load on mobile devices
             ensureImagesLoad();
@@ -1238,16 +1247,37 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('load', () => {
         if (isMobileDevice()) {
             // Force show emojis
-            const emojis = document.querySelectorAll('.skill-icon-emoji');
-            emojis.forEach(emoji => {
-                emoji.style.display = 'block';
-                emoji.style.visibility = 'visible';
-                emoji.style.opacity = '1';
-            });
+            setTimeout(() => {
+                const emojis = document.querySelectorAll('.skill-icon-emoji, .skill-icon');
+                emojis.forEach(emoji => {
+                    if (emoji.textContent && emoji.textContent.trim().length > 0) {
+                        emoji.style.display = 'block';
+                        emoji.style.visibility = 'visible';
+                        emoji.style.opacity = '1';
+                    }
+                });
+            }, 50);
             
             ensureImagesLoad();
             setTimeout(ensureImagesLoad, 1000);
         }
+        
+        // Add click handlers to project cards after they're rendered
+        setTimeout(() => {
+            const projectCards = document.querySelectorAll('.project-card');
+            projectCards.forEach(card => {
+                const githubUrl = card.getAttribute('data-github');
+                if (githubUrl) {
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('click', (e) => {
+                        // Don't navigate if clicking on overlay links
+                        if (!e.target.closest('.project-overlay') && !e.target.closest('a')) {
+                            window.open(githubUrl, '_blank', 'noopener,noreferrer');
+                        }
+                    });
+                }
+            });
+        }, 200);
     });
 });
 
