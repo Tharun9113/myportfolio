@@ -342,7 +342,9 @@ function renderSkills() {
         if (skill.icon === 'DSA_TEXT_ICON') {
             iconHTML = '<div class="skill-icon skill-icon-text">DSA</div>';
         } else if (isImageIcon) {
-            iconHTML = `<img src="${skill.icon}" alt="${skill.name}" class="skill-icon-img" loading="lazy" crossorigin="anonymous" onerror="console.error('Icon failed to load:', '${skill.icon}'); this.style.display='none'; this.parentElement.innerHTML='<div class=\\'skill-icon\\'>💻</div>';" onload="this.style.display='block'; this.style.opacity='1';" />`;
+            // Remove crossorigin for external CDN URLs to avoid CORS issues on mobile
+            // Add referrerpolicy and better error handling
+            iconHTML = `<img src="${skill.icon}" alt="${skill.name}" class="skill-icon-img" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null; this.style.display='none'; const fallback = document.createElement('div'); fallback.className='skill-icon'; fallback.textContent='💻'; this.parentElement.insertBefore(fallback, this); this.remove();" onload="this.style.display='block'; this.style.opacity='1'; this.style.visibility='visible';" style="display: block; opacity: 1; visibility: visible;" />`;
         } else {
             iconHTML = `<div class="skill-icon">${skill.icon || '💻'}</div>`;
         }
@@ -367,6 +369,45 @@ function preloadImage(src) {
         img.onload = () => resolve(img);
         img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
         img.src = src;
+    });
+}
+
+// ========================================
+// Mobile Image Loading Helper
+// ========================================
+function ensureImagesLoad() {
+    // Ensure all skill icons load on mobile
+    const skillIcons = document.querySelectorAll('.skill-icon-img');
+    skillIcons.forEach(img => {
+        if (!img.complete || img.naturalHeight === 0) {
+            // Image failed to load, retry once
+            const originalSrc = img.src;
+            img.src = '';
+            setTimeout(() => {
+                img.src = originalSrc;
+            }, 100);
+        }
+        // Force display
+        img.style.display = 'block';
+        img.style.opacity = '1';
+        img.style.visibility = 'visible';
+    });
+    
+    // Ensure all project images load on mobile
+    const projectImages = document.querySelectorAll('.project-image img');
+    projectImages.forEach(img => {
+        if (!img.complete || img.naturalHeight === 0) {
+            // Image failed to load, retry once
+            const originalSrc = img.src;
+            img.src = '';
+            setTimeout(() => {
+                img.src = originalSrc;
+            }, 100);
+        }
+        // Force display
+        img.style.display = 'block';
+        img.style.opacity = '1';
+        img.style.visibility = 'visible';
     });
 }
 
@@ -433,16 +474,25 @@ function renderProjectsGrid(filter) {
         let imageSrc = project.image || placeholderImage;
         // If it's a relative path starting with /, ensure it's absolute
         if (imageSrc.startsWith('/') && !imageSrc.startsWith('//') && !imageSrc.startsWith('http')) {
-            // Already absolute, keep as is
+            // Already absolute, keep as is - but ensure it works on mobile
+            // On mobile, sometimes we need to ensure the path is correct
+            if (imageSrc.startsWith('/images/')) {
+                // Keep as is - Vite will serve from public folder
+            }
         } else if (imageSrc.startsWith('./')) {
             // Convert relative to absolute
             imageSrc = imageSrc.replace('./', '/');
+        } else if (!imageSrc.startsWith('http') && !imageSrc.startsWith('data:')) {
+            // If it's not a full URL and not a data URI, make it absolute
+            if (!imageSrc.startsWith('/')) {
+                imageSrc = '/' + imageSrc;
+            }
         }
         
         return `
         <div class="project-card" data-aos="fade-up" data-aos-delay="${index * 100}">
             <div class="project-image">
-                <img src="${imageSrc}" alt="${project.title}" loading="lazy" onerror="console.error('Image failed to load:', '${imageSrc}'); this.src='${placeholderImage}'; this.style.display='block';" onload="this.style.opacity='1'; this.style.display='block';">
+                <img src="${imageSrc}" alt="${project.title}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${placeholderImage}'; this.style.display='block'; this.style.opacity='1'; this.style.visibility='visible';" onload="this.style.opacity='1'; this.style.display='block'; this.style.visibility='visible';" style="display: block; opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover;">
                 <div class="project-overlay">
                     ${project.demo ? `<a href="${project.demo}" target="_blank" aria-label="View Demo" rel="noopener noreferrer">🔗</a>` : ''}
                     ${project.github ? `<a href="${project.github}" target="_blank" aria-label="View Code" rel="noopener noreferrer">📂</a>` : ''}
@@ -932,7 +982,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const event = new Event('gsapReady');
             window.dispatchEvent(event);
         }
+        
+        // Ensure images load on mobile devices
+        if (window.innerWidth <= 768) {
+            ensureImagesLoad();
+            // Retry after a delay to handle slow network connections
+            setTimeout(ensureImagesLoad, 1000);
+        }
     }, 100);
+    
+    // Also ensure images load when window loads completely
+    window.addEventListener('load', () => {
+        if (window.innerWidth <= 768) {
+            ensureImagesLoad();
+        }
+    });
 });
 
 // ========================================

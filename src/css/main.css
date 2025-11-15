@@ -1651,6 +1651,18 @@ button[type="submit"]:disabled {
         visibility: visible !important;
         max-width: 100%;
         object-fit: contain;
+        margin: 0 auto;
+    }
+    
+    /* Ensure skill icons load on mobile */
+    .skill-item img.skill-icon-img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 56px !important;
+        height: 56px !important;
+        object-fit: contain !important;
+        margin: 0 auto 1rem !important;
     }
     
     .skill-name {
@@ -1721,9 +1733,35 @@ button[type="submit"]:disabled {
         display: block !important;
         opacity: 1 !important;
         visibility: visible !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+    
+    /* Ensure project images are always visible on mobile */
+    .project-image {
+        position: relative;
+        overflow: hidden;
+        background: var(--bg-secondary);
+    }
+    
+    .project-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        background: var(--bg-secondary);
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .project-image img:not([src=""]) {
+        z-index: 1;
     }
     
     .project-content {
@@ -2029,14 +2067,23 @@ button[type="submit"]:disabled {
     .skill-icon-img {
         width: 48px;
         height: 48px;
-    }
-    
-    .skill-icon-img {
         display: block !important;
         opacity: 1 !important;
         visibility: visible !important;
         max-width: 100%;
         object-fit: contain;
+        margin: 0 auto;
+    }
+    
+    /* Force skill icons to display on mobile */
+    .skill-item img.skill-icon-img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 48px !important;
+        height: 48px !important;
+        object-fit: contain !important;
+        margin: 0 auto 0.75rem !important;
     }
     
     .skill-name {
@@ -2071,12 +2118,20 @@ button[type="submit"]:disabled {
         display: block;
         visibility: visible;
         opacity: 1;
+        position: relative;
+        overflow: hidden;
+        background: var(--bg-secondary);
     }
     
     .project-image img {
         display: block !important;
         opacity: 1 !important;
         visibility: visible !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
     .project-content {
@@ -2139,12 +2194,20 @@ button[type="submit"]:disabled {
         display: block;
         visibility: visible;
         opacity: 1;
+        position: relative;
+        overflow: hidden;
+        background: var(--bg-secondary);
     }
     
     .project-image img {
         display: block !important;
         opacity: 1 !important;
         visibility: visible !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
 }
 
