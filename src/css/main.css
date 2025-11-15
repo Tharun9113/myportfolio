@@ -865,6 +865,14 @@ section {
     visibility: visible;
 }
 
+.skill-icon-emoji {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    text-align: center;
+    line-height: 1;
+}
+
 .skill-item:hover .skill-icon-img {
     transform: scale(1.1) rotate(5deg);
     filter: drop-shadow(0 4px 8px rgba(99, 102, 241, 0.3));

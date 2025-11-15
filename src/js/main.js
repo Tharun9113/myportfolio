@@ -325,6 +325,15 @@ function animateValue(element, start, end, duration) {
 }
 
 // ========================================
+// Mobile Detection
+// ========================================
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           (window.innerWidth <= 768) ||
+           ('ontouchstart' in window);
+}
+
+// ========================================
 // Icon Fallback Helper
 // ========================================
 function getIconFallback(skillName) {
@@ -341,6 +350,24 @@ function getIconFallback(skillName) {
         'App Development': '📱'
     };
     return iconMap[skillName] || '💻';
+}
+
+// ========================================
+// Get Alternative CDN URL
+// ========================================
+function getAlternativeCDN(originalUrl) {
+    if (!originalUrl || !originalUrl.includes('cdn.jsdelivr.net')) {
+        return null;
+    }
+    
+    // Try multiple CDN alternatives
+    const alternatives = [
+        originalUrl.replace('cdn.jsdelivr.net/gh/devicons/devicon/', 'raw.githubusercontent.com/devicons/devicon/master/'),
+        originalUrl.replace('cdn.jsdelivr.net', 'unpkg.com'),
+        originalUrl.replace('cdn.jsdelivr.net/gh/devicons/devicon/', 'cdnjs.cloudflare.com/ajax/libs/devicons/')
+    ];
+    
+    return alternatives[0]; // Return first alternative
 }
 
 // ========================================
@@ -364,43 +391,78 @@ function renderSkills() {
             // Create a unique ID for this icon
             const iconId = `skill-icon-${index}-${Date.now()}`;
             const fallbackEmoji = getIconFallback(skill.name);
+            const alternativeCDN = getAlternativeCDN(skill.icon);
             
-            // Try multiple CDN sources for better reliability
-            const alternativeCDN = skill.icon.replace('cdn.jsdelivr.net', 'raw.githubusercontent.com').replace('/gh/devicons/devicon/', '/devicons/devicon/master/');
+            // On mobile, show emoji immediately if CDN might be blocked
+            const useEmojiOnMobile = isMobileDevice();
             
-            iconHTML = `
-                <img 
-                    id="${iconId}" 
-                    src="${skill.icon}" 
-                    alt="${skill.name}" 
-                    class="skill-icon-img" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer"
-                    style="display: block; opacity: 1; visibility: visible; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem;"
-                    onerror="
-                        const img = this;
-                        const altSrc = '${alternativeCDN}';
-                        if (img.src !== altSrc && !img.dataset.triedAlt) {
-                            img.dataset.triedAlt = 'true';
-                            img.src = altSrc;
-                        } else {
-                            img.onerror = null;
-                            img.style.display = 'none';
-                            const fallback = document.createElement('div');
-                            fallback.className = 'skill-icon';
-                            fallback.textContent = '${fallbackEmoji}';
-                            fallback.style.fontSize = '3rem';
-                            img.parentElement.insertBefore(fallback, img);
-                            img.remove();
-                        }
-                    "
-                    onload="
-                        this.style.display = 'block';
-                        this.style.opacity = '1';
-                        this.style.visibility = 'visible';
-                    "
-                />
-            `;
+            if (useEmojiOnMobile) {
+                // On mobile, try to load icon but show emoji immediately as fallback
+                iconHTML = `
+                    <div class="skill-icon-emoji" style="font-size: 3rem; margin-bottom: 1rem; display: block;">${fallbackEmoji}</div>
+                    <img 
+                        id="${iconId}" 
+                        src="${skill.icon}" 
+                        alt="${skill.name}" 
+                        class="skill-icon-img" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer"
+                        style="display: none; opacity: 0; visibility: hidden; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem;"
+                        onload="
+                            this.style.display = 'block';
+                            this.style.opacity = '1';
+                            this.style.visibility = 'visible';
+                            const emoji = this.parentElement.querySelector('.skill-icon-emoji');
+                            if (emoji) emoji.style.display = 'none';
+                        "
+                        onerror="
+                            const img = this;
+                            const altSrc = '${alternativeCDN || ''}';
+                            if (altSrc && img.src !== altSrc && !img.dataset.triedAlt) {
+                                img.dataset.triedAlt = 'true';
+                                img.src = altSrc;
+                            } else {
+                                img.style.display = 'none';
+                            }
+                        "
+                    />
+                `;
+            } else {
+                // On desktop, use normal loading
+                iconHTML = `
+                    <img 
+                        id="${iconId}" 
+                        src="${skill.icon}" 
+                        alt="${skill.name}" 
+                        class="skill-icon-img" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer"
+                        style="display: block; opacity: 1; visibility: visible; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 1rem;"
+                        onerror="
+                            const img = this;
+                            const altSrc = '${alternativeCDN || ''}';
+                            if (altSrc && img.src !== altSrc && !img.dataset.triedAlt) {
+                                img.dataset.triedAlt = 'true';
+                                img.src = altSrc;
+                            } else {
+                                img.onerror = null;
+                                img.style.display = 'none';
+                                const fallback = document.createElement('div');
+                                fallback.className = 'skill-icon';
+                                fallback.textContent = '${fallbackEmoji}';
+                                fallback.style.fontSize = '3rem';
+                                img.parentElement.insertBefore(fallback, img);
+                                img.remove();
+                            }
+                        "
+                        onload="
+                            this.style.display = 'block';
+                            this.style.opacity = '1';
+                            this.style.visibility = 'visible';
+                        "
+                    />
+                `;
+            }
         } else {
             iconHTML = `<div class="skill-icon">${skill.icon || '💻'}</div>`;
         }
@@ -432,26 +494,26 @@ function preloadImage(src) {
 // Mobile Image Loading Helper
 // ========================================
 function ensureImagesLoad() {
+    if (!isMobileDevice()) return; // Only run on mobile
+    
     // Ensure all skill icons load on mobile
     const skillIcons = document.querySelectorAll('.skill-icon-img');
-    skillIcons.forEach((img, index) => {
-        // Force display first
-        img.style.display = 'block';
-        img.style.opacity = '1';
-        img.style.visibility = 'visible';
-        
-        if (!img.complete || img.naturalHeight === 0) {
-            // Image failed to load, try alternative CDN
+    skillIcons.forEach((img) => {
+        if (img.complete && img.naturalHeight > 0) {
+            // Image loaded successfully, show it and hide emoji
+            img.style.display = 'block';
+            img.style.opacity = '1';
+            img.style.visibility = 'visible';
+            const emoji = img.parentElement.querySelector('.skill-icon-emoji');
+            if (emoji) emoji.style.display = 'none';
+        } else {
+            // Image failed, try alternative CDN
             const originalSrc = img.src;
-            if (originalSrc.includes('cdn.jsdelivr.net')) {
-                const altSrc = originalSrc.replace('cdn.jsdelivr.net', 'raw.githubusercontent.com').replace('/gh/devicons/devicon/', '/devicons/devicon/master/');
-                img.src = altSrc;
-            } else {
-                // Retry original source
-                img.src = '';
-                setTimeout(() => {
-                    img.src = originalSrc;
-                }, 200);
+            if (originalSrc && originalSrc.includes('cdn.jsdelivr.net')) {
+                const altSrc = getAlternativeCDN(originalSrc);
+                if (altSrc) {
+                    img.src = altSrc;
+                }
             }
         }
     });
@@ -467,25 +529,30 @@ function ensureImagesLoad() {
         if (!img.complete || img.naturalHeight === 0) {
             // Image failed to load, try alternative paths
             const originalSrc = img.src;
-            if (originalSrc.includes('/images/')) {
+            const baseUrl = window.location.origin;
+            
+            if (originalSrc && originalSrc.includes('/images/')) {
                 // Try different path variations
                 const altPaths = [
-                    originalSrc.replace('/images/', './images/'),
-                    originalSrc.replace('/images/', 'images/'),
+                    baseUrl + '/images/' + originalSrc.split('/images/').pop(),
+                    baseUrl + '/images/' + originalSrc.split('/').pop(),
                     originalSrc
                 ];
+                
                 let currentPathIndex = 0;
                 const tryNextPath = () => {
                     if (currentPathIndex < altPaths.length) {
                         img.src = altPaths[currentPathIndex];
                         currentPathIndex++;
+                        if (currentPathIndex < altPaths.length) {
+                            setTimeout(tryNextPath, 300);
+                        }
                     }
                 };
-                img.src = '';
+                
                 setTimeout(tryNextPath, 200);
             } else {
                 // Retry original source
-                img.src = '';
                 setTimeout(() => {
                     img.src = originalSrc;
                 }, 200);
