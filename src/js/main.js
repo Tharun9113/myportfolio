@@ -552,23 +552,26 @@ function renderProjectsGrid(filter) {
     
     const placeholderImage = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Crect fill='%23ddd' width='400' height='250'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='16' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3EProject Image%3C/text%3E%3C/svg%3E`;
     
+    // Get base URL for absolute paths
+    const baseUrl = window.location.origin;
+    
     projectsGrid.innerHTML = filteredProjects.map((project, index) => {
         // Ensure image path is correct
         let imageSrc = project.image || placeholderImage;
-        // If it's a relative path starting with /, ensure it's absolute
+        
+        // If it's a relative path starting with /, make it absolute with base URL
         if (imageSrc.startsWith('/') && !imageSrc.startsWith('//') && !imageSrc.startsWith('http')) {
-            // Already absolute, keep as is - but ensure it works on mobile
-            // On mobile, sometimes we need to ensure the path is correct
-            if (imageSrc.startsWith('/images/')) {
-                // Keep as is - Vite will serve from public folder
-            }
+            // Make absolute URL using current domain
+            imageSrc = baseUrl + imageSrc;
         } else if (imageSrc.startsWith('./')) {
             // Convert relative to absolute
-            imageSrc = imageSrc.replace('./', '/');
+            imageSrc = baseUrl + imageSrc.replace('./', '/');
         } else if (!imageSrc.startsWith('http') && !imageSrc.startsWith('data:')) {
             // If it's not a full URL and not a data URI, make it absolute
             if (!imageSrc.startsWith('/')) {
-                imageSrc = '/' + imageSrc;
+                imageSrc = baseUrl + '/' + imageSrc;
+            } else {
+                imageSrc = baseUrl + imageSrc;
             }
         }
         
@@ -586,15 +589,31 @@ function renderProjectsGrid(filter) {
                     referrerpolicy="no-referrer" 
                     onerror="
                         const img = this;
+                        const baseUrl = window.location.origin;
                         if (img.src !== '${placeholderImage}' && !img.dataset.triedPlaceholder) {
                             img.dataset.triedPlaceholder = 'true';
-                            // Try alternative path
-                            const altPath = img.src.replace('/images/', './images/');
-                            if (altPath !== img.src) {
-                                img.src = altPath;
-                            } else {
-                                img.src = '${placeholderImage}';
-                            }
+                            // Try alternative paths
+                            const currentSrc = img.src;
+                            const altPaths = [
+                                baseUrl + '/images/' + currentSrc.split('/images/').pop(),
+                                baseUrl + '/images/' + currentSrc.split('/').pop(),
+                                currentSrc.replace(window.location.origin + '/images/', '/images/'),
+                                currentSrc.replace(window.location.origin + '/images/', './images/')
+                            ];
+                            let pathIndex = 0;
+                            const tryNextPath = () => {
+                                if (pathIndex < altPaths.length && img.src !== '${placeholderImage}') {
+                                    img.src = altPaths[pathIndex];
+                                    pathIndex++;
+                                } else {
+                                    img.onerror = null;
+                                    img.src = '${placeholderImage}';
+                                    img.style.display = 'block';
+                                    img.style.opacity = '1';
+                                    img.style.visibility = 'visible';
+                                }
+                            };
+                            setTimeout(tryNextPath, 100);
                         } else {
                             img.onerror = null;
                             img.src = '${placeholderImage}';
